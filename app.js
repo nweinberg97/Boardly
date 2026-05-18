@@ -289,6 +289,7 @@ document.getElementById('add-note')
 function initializeBoardly() {
   renderTabs();
   renderBoard();
+  enableTrashBin();
 }
 
 initializeBoardly();
