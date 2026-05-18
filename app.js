@@ -292,3 +292,30 @@ function initializeBoardly() {
 }
 
 initializeBoardly();
+
+
+function enableTrashBin() {
+  const trashBin = document.querySelector('.trash-bin');
+  const sound = new Audio('sounds/plastic-crunch-83779.mp3');
+
+  trashBin.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  trashBin.addEventListener('drop', (e) => {
+    e.preventDefault();
+
+    const cardId = Number(e.dataTransfer.getData('text/plain'));
+
+    state.boards[state.currentBoard] =
+      getCurrentBoardData().filter(card => card.id !== cardId);
+
+    sound.currentTime = 0;
+    sound.play();
+
+    saveState();
+    renderBoard();
+  });
+}
+
+
