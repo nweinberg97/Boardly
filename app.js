@@ -135,41 +135,14 @@ function enableDragging(element, cardData) {
     cardData.y = y;
   });
 
- document.addEventListener('mouseup', () => {
+  document.addEventListener('mouseup', () => {
 
-  if (!isDragging) return;
+    if (isDragging) saveState();
 
-  const trashBin = document.querySelector('.trash-bin');
-  const sound = new Audio('sounds/plastic-crunch-83779.mp3');
-
-  const cardRect = element.getBoundingClientRect();
-  const trashRect = trashBin.getBoundingClientRect();
-
-  const isOverTrash =
-    cardRect.right > trashRect.left &&
-    cardRect.left < trashRect.right &&
-    cardRect.bottom > trashRect.top &&
-    cardRect.top < trashRect.bottom;
-
-  if (isOverTrash) {
-
-    state.boards[state.currentBoard] =
-      getCurrentBoardData().filter(card => card.id !== cardData.id);
-
-    sound.currentTime = 0;
-    sound.play();
-
-    saveState();
-    renderBoard();
-
-  } else {
-
-    saveState();
-  }
-
-  isDragging = false;
-  element.style.zIndex = 1;
-});
+    isDragging = false;
+    element.style.zIndex = 1;
+  });
+}
 
 /* ---------- TABS ---------- */
 
@@ -345,5 +318,3 @@ function enableTrashBin() {
     renderBoard();
   });
 }
-
-
