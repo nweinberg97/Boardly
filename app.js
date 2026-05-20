@@ -128,22 +128,6 @@ function enableDragging(element, cardData) {
     const x = e.clientX - offsetX;
     const y = e.clientY - offsetY;
 
-/* ---------- TRASH HOVER ---------- */
-
-const trashBin = document.querySelector('.trash-bin');
-
-if (!trashBin) return;
-
-const trashRect = trashBin.getBoundingClientRect();
-
-const hoveringTrash =
-  e.clientX >= trashRect.left &&
-  e.clientX <= trashRect.right &&
-  e.clientY >= trashRect.top &&
-  e.clientY <= trashRect.bottom;
-
-trashBin.classList.toggle('active-trash', hoveringTrash);
-    
     element.style.left = `${x}px`;
     element.style.top = `${y}px`;
 
@@ -151,47 +135,14 @@ trashBin.classList.toggle('active-trash', hoveringTrash);
     cardData.y = y;
   });
 
+  document.addEventListener('mouseup', () => {
 
-document.addEventListener('mouseup', (e) => {
+    if (isDragging) saveState();
 
-  if (!isDragging) return;
-
-  const trashBin = document.querySelector('.trash-bin');
-
-  if (trashBin) {
-
-    const trashRect = trashBin.getBoundingClientRect();
-
-    const droppedInTrash =
-      e.clientX >= trashRect.left &&
-      e.clientX <= trashRect.right &&
-      e.clientY >= trashRect.top &&
-      e.clientY <= trashRect.bottom;
-
-    if (droppedInTrash) {
-
-      const sound = new Audio('sounds/plastic-crunch-83779.mp3');
-
-      state.boards[state.currentBoard] =
-        getCurrentBoardData().filter(card => card.id !== cardData.id);
-
-      sound.currentTime = 0;
-      sound.play();
-
-      saveState();
-      renderBoard();
-
-    } else {
-
-      saveState();
-    }
-
-    trashBin.classList.remove('active-trash');
-  }
-
-  isDragging = false;
-  element.style.zIndex = 1;
-});
+    isDragging = false;
+    element.style.zIndex = 1;
+  });
+}
 
 /* ---------- TABS ---------- */
 
@@ -338,6 +289,32 @@ document.getElementById('add-note')
 function initializeBoardly() {
   renderTabs();
   renderBoard();
+  enableTrashBin();
 }
 
+initializeBoardly();
 
+
+function enableTrashBin() {
+  const trashBin = document.querySelector('.trash-bin');
+  const sound = new Audio('sounds/plastic-crunch-83779.mp3');
+
+  trashBin.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  trashBin.addEventListener('drop', (e) => {
+    e.preventDefault();
+
+    const cardId = Number(e.dataTransfer.getData('text/plain'));
+
+    state.boards[state.currentBoard] =
+      getCurrentBoardData().filter(card => card.id !== cardId);
+
+    sound.currentTime = 0;
+    sound.play();
+
+    saveState();
+    renderBoard();
+  });
+}
