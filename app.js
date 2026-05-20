@@ -153,9 +153,7 @@ if (trashBin) {
   if (isOverTrash) {
     state.boards[state.currentBoard] =
       getCurrentBoardData().filter(c => c.id !== cardData.id);
-  }
-}
-    
+  } 
     isDragging = false;
     element.style.zIndex = 1;
   });
