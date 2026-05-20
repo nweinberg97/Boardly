@@ -1,6 +1,6 @@
 const board = document.getElementById('board');
 const tabsContainer = document.getElementById('tabs');
-
+const trashBin = document.querySelector('.trash-bin');
 /* ---------- STATE ---------- */
 
 const state = JSON.parse(localStorage.getItem('boardly-data')) || {
@@ -135,14 +135,34 @@ function enableDragging(element, cardData) {
     cardData.y = y;
   });
 
-  document.addEventListener('mouseup', () => {
+ document.addEventListener('mouseup', () => {
 
-    if (isDragging) saveState();
+  if (!isDragging) return;
 
-    isDragging = false;
-    element.style.zIndex = 1;
-  });
-}
+  // get card position
+  const cardRect = element.getBoundingClientRect();
+
+  // get trash position
+  const trashRect = trashBin.getBoundingClientRect();
+
+  // check overlap
+  const isOverTrash =
+    cardRect.right > trashRect.left &&
+    cardRect.left < trashRect.right &&
+    cardRect.bottom > trashRect.top &&
+    cardRect.top < trashRect.bottom;
+
+  // delete if dropped on trash
+  if (isOverTrash) {
+    state.boards[state.currentBoard] =
+      getCurrentBoardData().filter(c => c.id !== cardData.id);
+  }
+
+  saveState();
+
+  isDragging = false;
+  element.style.zIndex = 1;
+});
 
 /* ---------- TABS ---------- */
 
@@ -289,32 +309,5 @@ document.getElementById('add-note')
 function initializeBoardly() {
   renderTabs();
   renderBoard();
-  enableTrashBin();
 }
 
-initializeBoardly();
-
-
-function enableTrashBin() {
-  const trashBin = document.querySelector('.trash-bin');
-  const sound = new Audio('sounds/plastic-crunch-83779.mp3');
-
-  trashBin.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-
-  trashBin.addEventListener('drop', (e) => {
-    e.preventDefault();
-
-    const cardId = Number(e.dataTransfer.getData('text/plain'));
-
-    state.boards[state.currentBoard] =
-      getCurrentBoardData().filter(card => card.id !== cardId);
-
-    sound.currentTime = 0;
-    sound.play();
-
-    saveState();
-    renderBoard();
-  });
-}
