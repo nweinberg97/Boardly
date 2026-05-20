@@ -192,3 +192,10 @@ body {
 .trash-bin:hover {
     transform: scale(1.2); /* Grow in size when hovered */
 }
+
+.active-trash {
+  transform: scale(1.4);
+  opacity: 1;
+  filter: brightness(1.2);
+}
+
