@@ -64,34 +64,52 @@ body {
   outline: 2px dashed #999;
 }
 
-/* ---------- TOOLBAR ---------- */
+/* ---------- NEW FLOATING BUTTON LAYOUTS ---------- */
 
-.toolbar {
+/* Fixed bottom right container for Goal, Task, Note */
+.floating-actions {
+  position: fixed;
+  bottom: 24px;
+  right: 96px; /* Offset left so it sits nicely next to the trash bin */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 28px;
-  background: white;
-  border-bottom: 1px solid #ddd;
+  gap: 12px;
+  z-index: 9999;
 }
 
-.toolbar-left {
-  display: flex;
-  gap: 10px;
-  margin-left: 8px;
+/* Fixed bottom left container for Tab creation */
+.floating-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
 }
 
-.toolbar button {
+/* Unified clean, pill-shaped styling for all floating action buttons */
+.floating-actions button,
+.floating-controls button {
   border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: 500;
-  transition: 0.15s ease;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.toolbar button:hover {
-  transform: translateY(-1px);
+.floating-actions button:hover,
+.floating-controls button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.floating-actions button span,
+.floating-controls button span {
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* ---------- BUTTON COLORS ---------- */
@@ -104,7 +122,7 @@ body {
 #add-task {
   background: #ffffff;
   color: #111827;
-  border: 1px solid #e5e7eb; /* soft outline */
+  border: 1px solid #e5e7eb;
 }
 
 #add-note {
@@ -122,7 +140,8 @@ body {
 #board {
   position: relative;
   width: 100vw;
-  height: calc(100vh - 145px);
+  /* Updated to calculate space based only on the single topbar header */
+  height: calc(100vh - 86px); 
   overflow: hidden;
 }
 
@@ -178,24 +197,42 @@ body {
   overflow: hidden;
 }
 
-/* Trash Bin Styling */
+/* ---------- TRASH BIN STYLING ---------- */
+
 .trash-bin {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    cursor: pointer;
-    transition: transform 0.3s;
-    font-size: 40px; /* Larger size for the trash icon */
-    color: #e74c3c; /* Red color */
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  background: #ffffff;
+  border: 2px solid #ef4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
+  z-index: 9999;
+}
+
+.trash-icon {
+  font-size: 24px;
+  user-select: none;
 }
 
 .trash-bin:hover {
-    transform: scale(1.2); /* Grow in size when hovered */
+  transform: scale(1.1);
+  background: #fef2f2;
 }
 
+/* Active drag state matched with JS framework actions */
 .active-trash {
-  transform: scale(1.4);
-  opacity: 1;
-  filter: brightness(1.2);
+  transform: scale(1.3);
+  background: #ef4444 !important;
 }
 
+.active-trash .trash-icon {
+  filter: brightness(0) invert(1); /* Flips the emoji to stark white when active */
+}
