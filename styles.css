@@ -5,53 +5,70 @@ body {
   overflow: hidden;
 }
 
-/* ---------- HEADER ---------- */
+/* ---------- HEADER & INLINE CONTROLS ---------- */
 
 .topbar {
   background: white;
   border-bottom: 1px solid #ddd;
-  padding: 14px 20px 0 20px;
-  text-align: center;
+  padding: 12px 24px;
+}
+
+/* Spaces out the logo on the left and tabs/button on the right */
+.header-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .logo {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
-/* ---------- TABS ---------- */
+/* Holds tabs and the trailing creation button inline */
+.tabs-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
 
 .tabs {
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 8px;
-  margin-top: 14px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
 }
 
 .tab {
-  border: none;
-  background: #e9e9e9;
-  padding: 10px 16px;
-  border-radius: 10px 10px 0 0;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
   text-transform: capitalize;
-  transition: 0.15s ease;
-  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  color: #4b5563;
   user-select: none;
+  white-space: nowrap;
 }
 
 .tab:hover {
-  background: #dddddd;
+  background: #e5e7eb;
+  color: #1f2937;
 }
 
 .tab.active {
-  background: white;
-  color: black;
+  background: #1e293b;
+  color: white;
   font-weight: 600;
-  border-bottom: 2px solid white;
+  border-color: #1e293b;
 }
 
 /* ---------- TAB DRAG STATES ---------- */
@@ -64,29 +81,20 @@ body {
   outline: 2px dashed #999;
 }
 
-/* ---------- NEW FLOATING BUTTON LAYOUTS ---------- */
+/* ---------- FLOATING ACTION CLUSTER (CENTERED BOTTOM) ---------- */
 
-/* Fixed bottom right container for Goal, Task, Note */
 .floating-actions {
   position: fixed;
   bottom: 24px;
-  right: 96px; /* Offset left so it sits nicely next to the trash bin */
+  left: 50%;
+  transform: translateX(-50%); /* Locks the cluster exactly in the center */
   display: flex;
   gap: 12px;
   z-index: 9999;
 }
 
-/* Fixed bottom left container for Tab creation */
-.floating-controls {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 9999;
-}
-
-/* Unified clean, pill-shaped styling for all floating action buttons */
-.floating-actions button,
-.floating-controls button {
+/* Clean, pill-shaped styling for card buttons */
+.floating-actions button {
   border: none;
   padding: 12px 20px;
   border-radius: 50px;
@@ -100,14 +108,12 @@ body {
   gap: 6px;
 }
 
-.floating-actions button:hover,
-.floating-controls button:hover {
+.floating-actions button:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
-.floating-actions button span,
-.floating-controls button span {
+.floating-actions button span {
   font-size: 16px;
   font-weight: 700;
 }
@@ -131,17 +137,40 @@ body {
 }
 
 #add-tab {
-  background: #333;
+  border: none;
+  background: #2563eb; /* Sleek vibrant blue for the tab accent button */
   color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+  white-space: nowrap;
 }
 
-/* ---------- BOARD ---------- */
+#add-tab:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.15);
+}
+
+#add-tab span {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ---------- BOARD CANVAS ---------- */
 
 #board {
   position: relative;
   width: 100vw;
-  /* Updated to calculate space based only on the single topbar header */
-  height: calc(100vh - 86px); 
+  /* Balanced to fit perfectly under the single-line layout header */
+  height: calc(100vh - 61px); 
   overflow: hidden;
 }
 
@@ -227,12 +256,11 @@ body {
   background: #fef2f2;
 }
 
-/* Active drag state matched with JS framework actions */
 .active-trash {
   transform: scale(1.3);
   background: #ef4444 !important;
 }
 
 .active-trash .trash-icon {
-  filter: brightness(0) invert(1); /* Flips the emoji to stark white when active */
+  filter: brightness(0) invert(1);
 }
