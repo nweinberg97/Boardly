@@ -9,27 +9,31 @@
 </head>
 <body>
 
+  <!-- Top Navigation Header -->
   <header class="topbar">
     <h1 class="logo">Boardly</h1>
-
     <div class="tabs" id="tabs"></div>
   </header>
 
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <button id="add-goal">+ Goal</button>
-      <button id="add-task">+ Task</button>
-      <button id="add-note">+ Note</button>
-    </div>
-
-    <button id="add-tab">+ Tab</button>
-  </div>
-
+  <!-- Main Grid Workspace Canvas -->
   <main id="board"></main>
 
-   <div class="trash-bin" id="trash-bin">
-        🗑️
-    </div>
+  <!-- Floating Content Action Cluster (Bottom Right) -->
+  <div class="floating-actions">
+    <button id="add-goal" title="Add Goal"><span>+</span> Goal</button>
+    <button id="add-task" title="Add Task"><span>+</span> Task</button>
+    <button id="add-note" title="Add Note"><span>+</span> Note</button>
+  </div>
+
+  <!-- Floating Control Action (Bottom Left) -->
+  <div class="floating-controls">
+    <button id="add-tab" title="Add New Tab"><span>+</span> Tab</button>
+  </div>
+
+  <!-- Floating Trash Dropzone (Far Bottom Right) -->
+  <div class="trash-bin" id="trash-bin" title="Drag cards or tabs here to delete">
+    <div class="trash-icon">🗑️</div>
+  </div>
 
   <script src="app.js"></script>
 </body>
