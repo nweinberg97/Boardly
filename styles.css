@@ -10,7 +10,10 @@ body {
 .topbar {
   background: white;
   border-bottom: 1px solid #ddd;
-  padding: 12px 24px;
+  padding: 0 24px;   /* Let height handle vertical scaling */
+  height: 60px;      /* Explicitly locked structural height */
+  display: flex;
+  align-items: center;
 }
 
 /* Spaces out the logo on the left and tabs/button on the right */
@@ -19,6 +22,7 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
 }
 
 .logo {
@@ -31,15 +35,14 @@ body {
 /* Holds tabs and the trailing creation button inline */
 .tabs-wrapper {
   display: flex;
-  align-items: center;
+  align-items: center; /* Locks the middle horizon line for tabs and the button */
   gap: 12px;
-  flex-grow: 1;
-  justify-content: flex-end;
+  height: 100%;
 }
 
 .tabs {
   display: flex;
-  align-items: center;
+  align-items: center; /* Keeps tab elements aligned to the wrapper baseline */
   gap: 6px;
   flex-wrap: nowrap;
 }
@@ -169,8 +172,8 @@ body {
 #board {
   position: relative;
   width: 100vw;
-  /* Balanced to fit perfectly under the single-line layout header */
-  height: calc(100vh - 61px); 
+  /* Balanced to fit perfectly under the 60px frame header */
+  height: calc(100vh - 60px); 
   overflow: hidden;
 }
 
