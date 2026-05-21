@@ -4,20 +4,39 @@ const tabsContainer = document.getElementById('tabs');
 // Pre-load the audio asset immediately at boot to prevent browser autoplay lag
 const trashSound = new Audio('sounds/plastic-crunch-83779.mp3');
 
-// Simple collection of options for background highlights
+// Balanced 10-Colorway: 4 Blues, 4 Greens, and 2 Premium Dark Tones
 const pastelColors = [
-  '#F8BBD0', // Soft Pink
-  '#C5CAE9', // Soft Indigo
-  '#BBDEFB', // Soft Blue
-  '#C8E6C9', // Soft Green
-  '#FFF9C4', // Soft Yellow
-  '#FFE0B2', // Soft Orange
-  '#D7CCC8', // Soft Brown
-  '#E1BEE7'  // Soft Purple
+  '#E3F2FD', // 1. Ultra Light Ice Blue
+  '#D0E1FD', // 2. Soft Powder Blue
+  '#A9C7EB', // 3. Slate Blue Muted
+  '#8FB3DE', // 4. Steel Blue Highlight
+  '#F1F8E9', // 5. Minimalist Pale Mint
+  '#E2EFE0', // 6. Soft Sage Green
+  '#C2DBC1', // 7. Muted Olive/Clay Green
+  '#99BFA7', // 8. Earthy Moss Green
+  '#2C3E50', // 9. Deep Navy Charcoal
+  '#1E252B'  // 10. Premium Architectural Off-Black
 ];
 
-// Pure operational in-memory storage. No localStorage variables to clash or trigger resets.
-const activeTabColors = new Map();
+/* ---------- ISOLATED COLOR STORAGE (100% SAFE FROM CORE STATE) ---------- */
+
+// Load colors from an entirely independent storage key so it cannot trigger a core state wipeout
+let savedColors;
+try {
+  savedColors = JSON.parse(localStorage.getItem('boardly-tab-palette'));
+} catch (e) {
+  console.error("Color parsing error, resetting palette state:", e);
+  savedColors = null;
+}
+
+// Convert back to a live Map for runtime execution, or start fresh if empty
+const activeTabColors = new Map(savedColors ? Object.entries(savedColors) : null);
+
+function saveColorsToStorage() {
+  // Convert our runtime Map into a flat object structure for safe JSON stringification
+  const colorObject = Object.fromEntries(activeTabColors);
+  localStorage.setItem('boardly-tab-palette', JSON.stringify(colorObject));
+}
 
 /* ---------- STATE ---------- */
 
@@ -196,7 +215,7 @@ function enableDragging(element, cardData) {
   });
 }
 
-/* ---------- IN-MEMORY POPUP COLOR PICKER ---------- */
+/* ---------- POPUP COLOR PICKER ---------- */
 
 function showColorMenu(event, tab) {
   const existing = document.querySelector('.color-menu');
@@ -205,7 +224,7 @@ function showColorMenu(event, tab) {
   const menu = document.createElement('div');
   menu.className = 'color-menu';
 
-  // Apply explicit styling coordinates based entirely on mouse positions
+  // Configured as a symmetric 5-column, 2-row grid for the 10 options
   Object.assign(menu.style, {
     position: 'absolute',
     left: `${event.pageX}px`,
@@ -216,7 +235,7 @@ function showColorMenu(event, tab) {
     borderRadius: '8px',
     padding: '8px',
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 30px)',
+    gridTemplateColumns: 'repeat(5, 30px)',
     gap: '6px',
     boxShadow: '0px 4px 10px rgba(0,0,0,0.15)'
   });
@@ -237,8 +256,11 @@ function showColorMenu(event, tab) {
     swatch.addEventListener('click', (e) => {
       e.stopPropagation();
       
-      // Store in memory allocation map instead of touching data structures
+      // Store in memory allocation map
       activeTabColors.set(tab, color);
+
+      // Commit color state to isolated localStorage key
+      saveColorsToStorage();
 
       renderTabs();
       cleanupMenu();
@@ -282,7 +304,7 @@ function renderTabs() {
     button.textContent = tab;
     button.setAttribute('draggable', 'true');
 
-    // Safe color read straight out of your browser's current runtime session memory
+    // Safe color read directly out of our persistent browser color configuration map
     if (activeTabColors.has(tab)) {
       button.style.backgroundColor = activeTabColors.get(tab);
     }
@@ -324,10 +346,11 @@ function renderTabs() {
       state.boards[formatted] = state.boards[tab] || [];
       delete state.boards[tab];
 
-      // Update the memory map key configuration safely if a tab is renamed
+      // Update the color map key configuration cleanly if a tab is renamed, then save changes
       if (activeTabColors.has(tab)) {
         activeTabColors.set(formatted, activeTabColors.get(tab));
         activeTabColors.delete(tab);
+        saveColorsToStorage();
       }
 
       if (state.currentBoard === tab) {
@@ -444,8 +467,9 @@ function enableTrashBin() {
       state.tabs = state.tabs.filter(t => t !== draggedTab);
       delete state.boards[draggedTab];
       
-      // Clean memory assignment entry cleanly on tab destruction
+      // Remove color entry cleanly on tab deletion, then commit changes to storage
       activeTabColors.delete(draggedTab);
+      saveColorsToStorage();
 
       if (state.currentBoard === draggedTab) {
         state.currentBoard = state.tabs[0] || '';
