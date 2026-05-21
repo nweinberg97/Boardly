@@ -88,11 +88,17 @@ function renderBoard() {
 /* ---------- CARDS ---------- */
 
 function createCard(type) {
+  // Calculate horizontal center of the viewport minus half the card width (240px / 2)
+  const spawnLeft = (window.innerWidth / 2) - 120;
+
+  // Calculate vertical spawn position just above the centered bottom bar row layout 
+  const spawnTop = window.innerHeight - 160 - 110;
+
   const card = {
     id: Date.now(),
     type,
-    x: 100,
-    y: 100,
+    x: spawnLeft,
+    y: spawnTop,
     text: ''
   };
 
