@@ -10,14 +10,14 @@ body {
 .topbar {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  padding: 0 32px;    /* Extra breathing room on the outer window edges */
-  height: 60px;       /* Locked structural height */
+  padding: 0 32px;    
+  height: 60px;       
   display: flex;
   align-items: center;
   position: relative; 
 }
 
-/* Three-zone flex layout using flexible bases to balance screen geometry */
+/* Three-zone layout: Left, Center, Right balances cleanly */
 .header-nav-row {
   display: flex;
   justify-content: space-between;
@@ -32,8 +32,8 @@ body {
   font-weight: 700;
   white-space: nowrap;
   letter-spacing: -0.5px;
-  flex-grow: 1;
-  flex-basis: 20%;
+  flex: 1 1 20%;
+  text-align: left;
 }
 
 /* Centers the tab list horizontally across the screen */
@@ -42,8 +42,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
-  flex-grow: 1;
-  flex-basis: 60%;
+  flex: 1 1 60%;
 }
 
 .tabs {
@@ -53,7 +52,7 @@ body {
   flex-wrap: nowrap;
 }
 
-/* Base Tab Styling: Clean, premium structural capsule shape */
+/* Base Tab Styling: Clean capsule shape */
 .tab {
   border: 1px solid #e5e7eb;
   padding: 8px 14px;
@@ -70,6 +69,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .tab:hover {
@@ -80,21 +80,34 @@ body {
 
 /* Functional Color Indicator Dot Configuration */
 .tab-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
   transition: transform 0.2s ease, background-color 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* ---------- ACTIVE TAB OVERRIDE ---------- */
 .tab.active {
-  background: #1e252b !important; /* Premium architectural off-black text shell */
+  background: #1e252b !important; 
   color: #ffffff !important;
   border-color: #1e252b;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); /* Adds subtle vertical separation from inactive tabs */
+}
+
+/* Accent highlight bar underneath the active tab to differentiate from the add-tab button */
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20%;
+  width: 60%;
+  height: 3px;
+  background: #1e252b;
+  border-radius: 2px;
 }
 
 .tab.active .tab-dot {
@@ -118,10 +131,9 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
   
-  flex-grow: 1;
-  flex-basis: 20%;
+  flex: 1 1 20%;
   max-width: max-content;
-  margin-left: auto; /* Securely pins button to right edge area with breathing space */
+  margin-left: auto; /* Pushes button firmly to the right edge zone */
 }
 
 #add-tab:hover {
@@ -187,45 +199,32 @@ body {
 }
 
 .floating-actions button {
-  border: none;
+  border: 1px solid #374151;
   padding: 12px 20px;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   gap: 6px;
+  
+  /* Black background and white text for creation controls */
+  background: #1e252b;
+  color: #ffffff;
 }
 
 .floating-actions button:hover {
+  background: #000000;
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .floating-actions button span {
   font-size: 16px;
   font-weight: 700;
-}
-
-/* ---------- BUTTON COLORS ---------- */
-
-#add-goal {
-  background: #93c5fd;
-  color: #0f172a;
-}
-
-#add-task {
-  background: #ffffff;
-  color: #111827;
-  border: 1px solid #e5e7eb;
-}
-
-#add-note {
-  background: #ffee8c;
-  color: #111827;
 }
 
 /* ---------- BOARD CANVAS ---------- */
@@ -243,13 +242,16 @@ body {
 .card {
   position: absolute;
   width: 240px;
-  min-height: 110px;
+  min-height: 125px;
   padding: 14px;
   border-radius: 14px;
   cursor: grab;
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   user-select: none;
   transition: box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .card:hover {
@@ -260,19 +262,46 @@ body {
   cursor: grabbing;
 }
 
+/* Inner header container to place the matching status circle indicator inside the cards */
+.card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 12px;
+}
+
+.card-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 /* ---------- CARD TYPES ---------- */
 
 .goal {
-  background: #93c5fd;
+  background: #3b82f6; /* High-vibrancy Blue */
+}
+.goal .card-dot {
+  background: #3b82f6;
+  filter: brightness(0.8);
 }
 
 .task {
   background: #ffffff;
   border: 1px solid #e5e7eb;
 }
+.task .card-dot {
+  background: #9ca3af; /* Medium Slate Gray indicator circle for default task card base */
+}
 
 .note {
-  background: #ffee8c;
+  background: #eab308; /* High-vibrancy Amber Yellow */
+}
+.note .card-dot {
+  background: #eab308;
+  filter: brightness(0.8);
 }
 
 /* ---------- TEXTAREA ---------- */
@@ -287,8 +316,12 @@ body {
   font-size: 14px;
   line-height: 1.4;
   font-family: inherit;
-  color: #111827;
-  overflow: hidden;
+  /* Flip text to white on highly saturated card types for scannable text reading contrast */
+  color: #111827; 
+}
+
+.goal textarea {
+  color: #ffffff;
 }
 
 /* ---------- TRASH BIN STYLING ---------- */
