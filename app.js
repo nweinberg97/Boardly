@@ -1,29 +1,27 @@
 const board = document.getElementById('board');
 const tabsContainer = document.getElementById('tabs');
 
-// Pre-load the audio asset immediately at boot to prevent browser autoplay lag
 const trashSound = new Audio('sounds/plastic-crunch-83779.mp3');
 
-// Balanced Broad-Spectrum Palette: Clean, distinct pastel tones across the color wheel
-const pastelColors = [
-  '#FFEBEE', // 1. Soft Rose / Pink
-  '#F3E5F5', // 2. Gentle Lavender / Purple
-  '#E3F2FD', // 3. Light Ice Blue
-  '#E0F7FA', // 4. Clear Sky Cyan
-  '#E8F5E9', // 5. Minimalist Mint Green
-  '#FFF9C4', // 6. Pale Butter Yellow
-  '#FFE0B2', // 7. Soft Peach / Orange
-  '#D7CCC8', // 8. Warm Earthy Clay / Taupe
-  '#2C3E50', // 9. Deep Navy Charcoal
-  '#1E252B'  // 10. Premium Architectural Off-Black
+// Vibrant Broad-Spectrum Palette: Clean, deep, highly saturated tones across the color wheel
+const vibrantColors = [
+  '#ef4444', // 1. Vibrant Red
+  '#3b82f6', // 2. Electric Blue
+  '#10b981', // 3. Emerald Green
+  '#f59e0b', // 4. Amber Yellow
+  '#8b5cf6', // 5. Vivid Purple
+  '#ec4899', // 6. Hot Pink
+  '#06b6d4', // 7. Cyan / Teal
+  '#f97316', // 8. Pure Orange
+  '#64748b', // 9. Slate Gray
+  '#1e252b'  // 10. Architectural Charcoal
 ];
 
-// Helper mapping to give each tab a default starting color fallback if unassigned
 function getDefaultColor(tabIndex) {
-  return pastelColors[tabIndex % pastelColors.length];
+  return vibrantColors[tabIndex % vibrantColors.length];
 }
 
-/* ---------- ISOLATED COLOR STORAGE (100% SAFE FROM CORE STATE) ---------- */
+/* ---------- ISOLATED COLOR STORAGE ---------- */
 
 let savedColors;
 try {
@@ -58,13 +56,9 @@ const state = JSON.parse(localStorage.getItem('boardly-data')) || {
   boards: {}
 };
 
-/* ---------- SAVE ---------- */
-
 function saveState() {
   localStorage.setItem('boardly-data', JSON.stringify(state));
 }
-
-/* ---------- BOARDS ---------- */
 
 function ensureBoardExists(tab) {
   if (!state.boards[tab]) {
@@ -86,8 +80,8 @@ function updateCanvasBackground() {
     ? activeTabColors.get(currentTab) 
     : getDefaultColor(tabIndex >= 0 ? tabIndex : 0);
 
-  // Apply a very subtle 2% / 3% transparency wash across the main app workspace canvas layout frame
-  board.style.backgroundColor = `${color}15`; 
+  // Apply a subtle 8% transparency wash to match the new high vibrancy colors cleanly
+  board.style.backgroundColor = `${color}13`; 
 }
 
 function renderBoard() {
@@ -124,6 +118,14 @@ function createCardElement(cardData) {
   card.classList.add('card', cardData.type);
   card.style.left = `${cardData.x}px`;
   card.style.top = `${cardData.y}px`;
+
+  // Appends top header dot layout track to the card frame dynamically
+  const cardHeader = document.createElement('div');
+  cardHeader.className = 'card-header';
+  const cardDot = document.createElement('span');
+  cardDot.className = 'card-dot';
+  cardHeader.appendChild(cardDot);
+  card.appendChild(cardHeader);
 
   const textarea = document.createElement('textarea');
   textarea.value = cardData.text;
@@ -232,7 +234,7 @@ function showColorMenu(event, tab) {
     top: `${event.pageY}px`
   });
 
-  pastelColors.forEach(color => {
+  vibrantColors.forEach(color => {
     const swatch = document.createElement('div');
     swatch.className = 'color-swatch';
     swatch.style.backgroundColor = color;
@@ -282,13 +284,9 @@ function renderTabs() {
 
     button.setAttribute('draggable', 'true');
 
-    // Extract correct tab color configuration
     const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
-
-    // Dynamic insertion of structural dot layout component inside button node text string
     button.innerHTML = `<span class="tab-dot" style="background-color: ${tabColor};"></span>${tab}`;
 
-    /* SWITCH TAB */
     button.addEventListener('click', () => {
       state.currentBoard = tab;
       saveState();
@@ -296,13 +294,11 @@ function renderTabs() {
       renderBoard();
     });
 
-    /* RIGHT CLICK → TRIGGER POPUP PICKER */
     button.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       showColorMenu(e, tab);
     });
 
-    /* RENAME TAB */
     button.addEventListener('dblclick', (e) => {
       e.stopPropagation();
 
@@ -336,7 +332,6 @@ function renderTabs() {
       renderBoard();
     });
 
-    /* DRAG START */
     button.addEventListener('dragstart', (e) => {
       button.classList.add('dragging');
       e.dataTransfer.setData('text/plain', tab);
@@ -346,7 +341,6 @@ function renderTabs() {
       button.classList.remove('dragging');
     });
 
-    /* DROP OVER */
     button.addEventListener('dragover', (e) => {
       e.preventDefault();
       button.classList.add('drag-over');
@@ -356,9 +350,9 @@ function renderTabs() {
       button.classList.remove('drag-over');
     });
 
-    /* DROP REORDER */
     button.addEventListener('drop', (e) => {
       e.preventDefault();
+      button.classList.remove('drag-over');
 
       const draggedTab = e.dataTransfer.getData('text/plain');
 
@@ -454,8 +448,6 @@ function enableTrashBin() {
     }
   });
 }
-
-/* ---------- INIT ---------- */
 
 function initializeBoardly() {
   renderTabs();
