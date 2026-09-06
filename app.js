@@ -461,15 +461,20 @@ function renderTabs() {
   });
 }
 
-/* ---------- TOOLBAR ARROW NAVIGATION ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS ---------- */
 
-document.getElementById('scroll-left').addEventListener('click', () => {
-  tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
-});
+const scrollLeftBtn = document.getElementById('scroll-left');
+const scrollRightBtn = document.getElementById('scroll-right');
 
-document.getElementById('scroll-right').addEventListener('click', () => {
-  tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
-});
+if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
+  scrollLeftBtn.addEventListener('click', () => {
+    tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+  });
+
+  scrollRightBtn.addEventListener('click', () => {
+    tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+  });
+}
 
 /* ---------- ADD TAB ---------- */
 
