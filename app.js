@@ -511,28 +511,45 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (CAROUSEL FIX) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (ELEMENT-AWARE SNAPPING) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
-  scrollLeftBtn.addEventListener('click', () => {
-    if (tabsWrapper.scrollLeft <= 10) {
-      const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
-      tabsWrapper.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
-    } else {
-      tabsWrapper.scrollBy({ left: -180, behavior: 'smooth' });
+  scrollRightBtn.addEventListener('click', () => {
+    const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
+    if (tabs.length === 0) return;
+
+    const containerRect = tabsWrapper.getBoundingClientRect();
+    
+    // Find the next tab that extends past the right edge of the visible wrapper
+    let targetTab = tabs.find(tab => tab.getBoundingClientRect().left > containerRect.right - 10);
+
+    // If no tab is cut off on the right, loop smoothly back to the first tab
+    if (!targetTab) {
+      targetTab = tabs[0];
     }
+
+    targetTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
   });
 
-  scrollRightBtn.addEventListener('click', () => {
-    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
-    if (tabsWrapper.scrollLeft >= maxScrollLeft - 10) {
-      tabsWrapper.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      tabsWrapper.scrollBy({ left: 180, behavior: 'smooth' });
+  scrollLeftBtn.addEventListener('click', () => {
+    const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
+    if (tabs.length === 0) return;
+
+    const containerRect = tabsWrapper.getBoundingClientRect();
+    
+    // Find all tabs whose right edge is hidden to the left
+    const hiddenTabs = tabs.filter(tab => tab.getBoundingClientRect().right < containerRect.left + 10);
+    let targetTab = hiddenTabs[hiddenTabs.length - 1];
+
+    // If we are already at the beginning, loop smoothly around to the final tab
+    if (!targetTab) {
+      targetTab = tabs[tabs.length - 1];
     }
+
+    targetTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
   });
 }
 /* ---------- ADD TAB ---------- */
