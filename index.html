@@ -14,10 +14,15 @@
     <div class="header-nav-row">
       <h1 class="logo">Boardly</h1>
       
+      <!-- Toolbar Scroll Navigation Buttons -->
+      <button class="toolbar-scroll-btn" id="scroll-left" title="Scroll Left">‹</button>
+
       <!-- Centers board tabs and manages overflow mask states -->
       <div class="tabs-wrapper" id="tabs-wrapper">
         <div class="tabs" id="tabs"></div>
       </div>
+
+      <button class="toolbar-scroll-btn" id="scroll-right" title="Scroll Right">›</button>
 
       <!-- Explicit Layout Spacer to enforce rigid padding before the action button -->
       <div class="header-spacer"></div>
@@ -32,9 +37,9 @@
 
   <!-- Floating Content Action Cluster (Bottom Right) -->
   <div class="floating-actions">
-    <button id="add-goal" title="Add Goal"><span class="btn-icon goal-icon">+</span> Goal</button>
-    <button id="add-task" title="Add Task"><span class="btn-icon task-icon">+</span> Task</button>
-    <button id="add-note" title="Add Note"><span class="btn-icon note-icon">+</span> Note</button>
+    <button id="add-goal" title="Add Goal"><span class="btn-icon">+</span> Goal</button>
+    <button id="add-task" title="Add Task"><span class="btn-icon">+</span> Task</button>
+    <button id="add-note" title="Add Note"><span class="btn-icon">+</span> Note</button>
   </div>
 
   <!-- Floating Trash Dropzone (Far Bottom Right) -->
