@@ -375,87 +375,101 @@ function renderTabs() {
       deleteTab(tab);
     });
 
-    button.addEventListener('click', () => {
-      state.currentBoard = tab;
-      saveState();
+  let clickTimeout = null;
+
+button.addEventListener('click', (e) => {
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+    return;
+  }
+
+  clickTimeout = setTimeout(() => {
+    clickTimeout = null;
+    state.currentBoard = tab;
+    saveState();
+    renderTabs();
+    renderBoard();
+  }, 250);
+});
+
+button.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  showColorMenu(e, tab);
+});
+
+button.addEventListener('dblclick', (e) => {
+  e.stopPropagation();
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+  }
+
+  const textSpan = button.querySelector('.tab-text');
+  if (!textSpan) return;
+
+  const currentText = tab;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'tab-input';
+  input.value = currentText;
+
+  textSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  let isSubmitted = false;
+
+  const commitChange = () => {
+    if (isSubmitted) return;
+    isSubmitted = true;
+
+    const newName = input.value.toLowerCase().trim();
+    if (!newName || newName === currentText) {
       renderTabs();
-      renderBoard();
-    });
+      return;
+    }
 
-    button.addEventListener('contextmenu', (e) => {
+    if (state.tabs.includes(newName)) {
+      alert('Tab already exists');
+      renderTabs();
+      return;
+    }
+
+    state.tabs = state.tabs.map(t => t === currentText ? newName : t);
+    state.boards[newName] = state.boards[currentText] || [];
+    delete state.boards[currentText];
+
+    if (activeTabColors.has(currentText)) {
+      activeTabColors.set(newName, activeTabColors.get(currentText));
+      activeTabColors.delete(currentText);
+      saveColorsToStorage();
+    }
+
+    if (state.currentBoard === currentText) {
+      state.currentBoard = newName;
+    }
+
+    saveState();
+    renderTabs();
+    renderBoard();
+  };
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      showColorMenu(e, tab);
-    });
+      commitChange();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      isSubmitted = true;
+      renderTabs();
+    }
+  });
 
-   button.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-
-      const textSpan = button.querySelector('.tab-text');
-      if (!textSpan) return;
-
-      const currentText = tab;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'tab-input';
-      input.value = currentText;
-
-      textSpan.replaceWith(input);
-      input.focus();
-      input.select();
-
-      let isSubmitted = false;
-
-      const commitChange = () => {
-        if (isSubmitted) return;
-        isSubmitted = true;
-
-        const newName = input.value.toLowerCase().trim();
-        if (!newName || newName === currentText) {
-          renderTabs();
-          return;
-        }
-
-        if (state.tabs.includes(newName)) {
-          alert('Tab already exists');
-          renderTabs();
-          return;
-        }
-
-        state.tabs = state.tabs.map(t => t === currentText ? newName : t);
-        state.boards[newName] = state.boards[currentText] || [];
-        delete state.boards[currentText];
-
-        if (activeTabColors.has(currentText)) {
-          activeTabColors.set(newName, activeTabColors.get(currentText));
-          activeTabColors.delete(currentText);
-          saveColorsToStorage();
-        }
-
-        if (state.currentBoard === currentText) {
-          state.currentBoard = newName;
-        }
-
-        saveState();
-        renderTabs();
-        renderBoard();
-      };
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          commitChange();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          isSubmitted = true;
-          renderTabs();
-        }
-      });
-
-      input.addEventListener('blur', () => {
-        commitChange();
-      });
-    });
-
+  input.addEventListener('blur', () => {
+    commitChange();
+  });
+});
     button.addEventListener('dragstart', (e) => {
       button.classList.add('dragging');
       e.dataTransfer.setData('text/plain', tab);
