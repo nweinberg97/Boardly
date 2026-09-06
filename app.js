@@ -497,25 +497,26 @@ function renderTabs() {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (LOOPING) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (FIXED LOOPING) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
   scrollLeftBtn.addEventListener('click', () => {
-    if (tabsWrapper.scrollLeft <= 5) {
+    if (tabsWrapper.scrollLeft <= 10) {
       tabsWrapper.scrollTo({ left: tabsWrapper.scrollWidth, behavior: 'smooth' });
     } else {
-      tabsWrapper.scrollBy({ left: -160, behavior: 'smooth' });
+      tabsWrapper.scrollBy({ left: -180, behavior: 'smooth' });
     }
   });
 
   scrollRightBtn.addEventListener('click', () => {
-    if (tabsWrapper.scrollLeft + tabsWrapper.clientWidth >= tabsWrapper.scrollWidth - 5) {
+    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
+    if (tabsWrapper.scrollLeft >= maxScrollLeft - 10) {
       tabsWrapper.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
-      tabsWrapper.scrollBy({ left: 160, behavior: 'smooth' });
+      tabsWrapper.scrollBy({ left: 180, behavior: 'smooth' });
     }
   });
 }
