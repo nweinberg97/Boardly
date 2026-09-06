@@ -63,6 +63,18 @@ undoBtn.addEventListener('click', () => {
   updateUndoButtonVisual();
 });
 
+/* ---------- GLOBAL UNDO KEYBOARD SHORTCUT ---------- */
+
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+    if (undoStack.length > 0) {
+      e.preventDefault();
+      undoBtn.click();
+    }
+  }
+});
 /* ---------- ISOLATED COLOR STORAGE ---------- */
 
 let savedColors;
