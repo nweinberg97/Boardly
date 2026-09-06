@@ -68,14 +68,12 @@ body {
   flex: 1 1 65%;
   max-width: 65%;
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox clear track */
+  scrollbar-width: none;
   
-  /* Visual Fade Masks: Alerts users that additional hidden tabs exist out of frame */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
   mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
 }
 
-/* Custom scroller mitigation for tabs track if boundaries overflow */
 .tabs-wrapper::-webkit-scrollbar {
   display: none;
 }
@@ -88,12 +86,11 @@ body {
   padding: 0 16px;
 }
 
-/* Explicit layout separation metric between center track and right-hand interaction node */
 .header-spacer {
-  flex: 0 0 40px; /* Enforces a strict, un-collapsible 40px barrier space */
+  flex: 0 0 40px;
 }
 
-/* Base Tab Styling: Clean capsule shape */
+/* Base Tab Styling */
 .tab {
   border: 1px solid #e5e7eb;
   padding: 8px 14px;
@@ -110,9 +107,9 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
   
-  /* Text handling safeguards for elongated names */
-  max-width: 140px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -123,7 +120,32 @@ body {
   border-color: #d1d5db;
 }
 
-/* Inline tab editing input field styling */
+/* Hover Delete Button for Tabs */
+.tab-delete {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 2px;
+  margin-left: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.15s ease;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab:hover .tab-delete {
+  opacity: 0.6;
+}
+
+.tab-delete:hover {
+  opacity: 1 !important;
+  color: #ef4444;
+}
+
 .tab-input {
   background: transparent;
   border: none;
@@ -137,7 +159,6 @@ body {
   margin: 0;
 }
 
-/* Functional Color Indicator Dot Configuration */
 .tab-dot {
   width: 10px;
   height: 10px;
@@ -147,21 +168,19 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ---------- ACTIVE TAB OVERRIDE (CLEAN RING AND SCALE SIGNAL) ---------- */
 .tab.active {
   background: #1e252b !important; 
   color: #ffffff !important;
   border-color: #1e252b;
-  transform: scale(1.04); /* Clean geometric pop signature */
+  transform: scale(1.04);
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.18);
-  overflow: visible; /* Prevent ellipsis cutoff when active if scaling is applied */
+  overflow: visible;
 }
 
 .tab.active .tab-dot {
   transform: scale(1.1);
 }
 
-/* ---------- ADD TAB BUTTON (RIGHT BOUNDARY) ---------- */
 #add-tab {
   border: none;
   background: #1e252b; 
@@ -177,7 +196,6 @@ body {
   transition: all 0.15s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
-  
   flex: 0 0 auto;
   margin-left: auto; 
 }
@@ -245,7 +263,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  
   background: #1e252b;
   color: #ffffff;
 }
@@ -256,7 +273,6 @@ body {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* Base plus icon styling */
 .btn-icon {
   font-size: 16px;
   font-weight: 700;
@@ -266,17 +282,16 @@ body {
   display: inline-flex;
 }
 
-/* Distinct matching colors for each action's plus sign */
 #add-goal .btn-icon {
-  color: #93c5fd; /* Soft Blue */
+  color: #93c5fd; 
 }
 
 #add-task .btn-icon {
-  color: #ffffff; /* Clean White */
+  color: #ffffff; 
 }
 
 #add-note .btn-icon {
-  color: #fde047; /* Bright Yellow / Amber for visibility on dark bg */
+  color: #fde047; 
 }
 
 /* ---------- BOARD CANVAS ---------- */
@@ -289,7 +304,6 @@ body {
   background-color: #f4f5f7;
 }
 
-/* Architectural Top-Left Anchor Active Color Tag Indicator (15% Toolbar Width) */
 #board::before {
   content: '';
   position: absolute;
@@ -327,19 +341,50 @@ body {
   cursor: grabbing;
 }
 
+/* Hover Delete Button for Cards */
+.card-delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.15s ease, color 0.15s ease;
+  color: #374151;
+  z-index: 5;
+}
+
+.card:hover .card-delete {
+  opacity: 1;
+}
+
+.card-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
 /* ---------- CARD TYPES ---------- */
 
 .goal {
-  background: #93c5fd; /* Soft Blue */
+  background: #dbeafe; /* Soft Muted Blue */
 }
 
 .task {
-  background: #ffffff; /* Clean White */
+  background: #ffffff; 
   border: 1px solid #e5e7eb;
 }
 
 .note {
-  background: #ffee8c; /* Soft Yellow */
+  background: #fef08a; /* Soft Muted Yellow */
 }
 
 /* ---------- TEXTAREA ---------- */
@@ -356,6 +401,33 @@ body {
   font-family: inherit;
   color: #111827;
   overflow: hidden;
+}
+
+/* ---------- UNDO BUTTON (BOTTOM LEFT) ---------- */
+
+.undo-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 52px;
+  height: 52px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #374151;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+  z-index: 9999;
+}
+
+.undo-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
 }
 
 /* ---------- TRASH BIN STYLING ---------- */
@@ -376,6 +448,11 @@ body {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
   z-index: 9999;
+}
+
+.trash-bin.drag-over {
+  transform: scale(1.15);
+  background: #fee2e2;
 }
 
 .trash-icon {
