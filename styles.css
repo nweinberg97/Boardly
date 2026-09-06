@@ -235,7 +235,7 @@ body {
 
 .floating-actions button {
   border: 1px solid #374151;
-  padding: 8px 18px 8px 10px; /* Shift padding left to nest icons cleanly */
+  padding: 10px 16px;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
@@ -244,7 +244,7 @@ body {
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   
   background: #1e252b;
   color: #ffffff;
@@ -256,31 +256,49 @@ body {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* Enclosed circular badge behind the plus symbols */
+/* Plain white plus icon on the left */
 .btn-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 16px;
   font-weight: 700;
-  flex-shrink: 0;
+  color: #ffffff;
+  background: transparent;
+  width: auto;
+  height: auto;
+  display: inline-flex;
 }
 
-/* Color Matching Rules for Card Generation Nodes with High Contrast */
-.goal-icon {
-  background: #2563eb; /* Deep Blue Contrast */
-  color: #ffffff;
+/* Color indicator dots on the right of the button text */
+#add-goal::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #93c5fd; /* Soft Blue */
+  display: inline-block;
+  margin-left: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
-.task-icon {
-  background: #374151; /* Charcoal Contrast */
-  color: #ffffff;    
+
+#add-task::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffffff; /* Clean White */
+  display: inline-block;
+  margin-left: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
-.note-icon {
-  background: #ca8a04; /* Darker Amber Contrast */
-  color: #ffffff;
+
+#add-note::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffee8c; /* Soft Yellow */
+  display: inline-block;
+  margin-left: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 /* ---------- BOARD CANVAS ---------- */
@@ -290,16 +308,16 @@ body {
   width: 100vw;
   height: calc(100vh - 60px); 
   overflow: hidden;
-  background-color: #f4f5f7; /* Keep neutral canvas baseline */
+  background-color: #f4f5f7;
 }
 
-/* Architectural Top-Left Anchor Active Color Tag Indicator (25% Toolbar Width) */
+/* Architectural Top-Left Anchor Active Color Tag Indicator (15% Toolbar Width) */
 #board::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 25vw;
+  width: 15vw;
   height: 5px;
   background-color: var(--active-board-accent, #1e252b);
   border-radius: 0 0 4px 0;
@@ -307,12 +325,12 @@ body {
   transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ---------- CARDS (COLOR DOTS ENTIRELY STRIPPED FROM BODY) ---------- */
+/* ---------- CARDS ---------- */
 
 .card {
   position: absolute;
   width: 240px;
-  min-height: 100px; /* Reduced since structural headers are wiped */
+  min-height: 100px;
   padding: 16px;
   border-radius: 14px;
   cursor: grab;
@@ -331,7 +349,7 @@ body {
   cursor: grabbing;
 }
 
-/* ---------- CARD TYPES (CLEAN MINIMAL PAPERS) ---------- */
+/* ---------- CARD TYPES ---------- */
 
 .goal {
   background: #93c5fd; /* Soft Blue */
