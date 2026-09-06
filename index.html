@@ -37,8 +37,10 @@
 
 <button id="undo-btn" class="undo-btn" title="Undo deletion">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-    <path d="M3 3v5h5"></path>
+    <!-- Pulls the arc end back down to create a cleaner gap -->
+    <path d="M5.5 12a8.5 8.5 0 1 0 8.5-8.5c-2.1 0-4 .8-5.5 2.1"></path>
+    <!-- Positions the arrow head with natural spacing -->
+    <path d="M5 3v5h5"></path>
   </svg>
 </button>
 
