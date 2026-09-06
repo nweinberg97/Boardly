@@ -463,19 +463,28 @@ function renderTabs() {
 
 /* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS ---------- */
 
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (LOOPING) ---------- */
+
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
   scrollLeftBtn.addEventListener('click', () => {
-    tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+    if (tabsWrapper.scrollLeft <= 5) {
+      tabsWrapper.scrollTo({ left: tabsWrapper.scrollWidth, behavior: 'smooth' });
+    } else {
+      tabsWrapper.scrollBy({ left: -160, behavior: 'smooth' });
+    }
   });
 
   scrollRightBtn.addEventListener('click', () => {
-    tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+    if (tabsWrapper.scrollLeft + tabsWrapper.clientWidth >= tabsWrapper.scrollWidth - 5) {
+      tabsWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      tabsWrapper.scrollBy({ left: 160, behavior: 'smooth' });
+    }
   });
 }
-
 /* ---------- ADD TAB ---------- */
 
 document.getElementById('add-tab').addEventListener('click', () => {
