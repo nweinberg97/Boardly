@@ -69,9 +69,10 @@ document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
     if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
 
-    if (undoStack.length > 0) {
+    const currentUndoBtn = document.getElementById('undo-btn');
+    if (undoStack.length > 0 && currentUndoBtn) {
       e.preventDefault();
-      undoBtn.click();
+      currentUndoBtn.click();
     }
   }
 });
