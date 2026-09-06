@@ -1,51 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boardly</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
-  <header class="topbar">
-    <div class="header-nav-row">
-      <h1 class="logo">Boardly</h1>
-      
-      <!-- Toolbar Scroll Navigation Buttons -->
-      <button class="toolbar-scroll-btn" id="scroll-left" title="Scroll Left">‹</button>
-
-      <!-- Centers board tabs and manages overflow mask states -->
-      <div class="tabs-wrapper" id="tabs-wrapper">
-        <div class="tabs" id="tabs"></div>
-      </div>
-
-      <button class="toolbar-scroll-btn" id="scroll-right" title="Scroll Right">›</button>
-
-      <!-- Explicit Layout Spacer to enforce rigid padding before the action button -->
-      <div class="header-spacer"></div>
-
-      <!-- Placed directly in the row to anchor beautifully to the right edge -->
-      <button id="add-tab" title="Add New Tab"><span>+</span> Tab</button>
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="logo">Boardly</div>
+    <div id="tabs-wrapper" class="tabs-wrapper">
+      <div id="tabs" class="tabs-container"></div>
     </div>
+    <button id="add-tab" class="add-tab-btn" title="Add Board Tab">+</button>
   </header>
 
-  <!-- Main Grid Workspace Canvas -->
-  <main id="board"></main>
+  <!-- Main Canvas Board -->
+  <main id="board" class="board-canvas"></main>
 
-  <!-- Floating Content Action Cluster (Bottom Right) -->
+  <!-- Bottom-Left Undo Button -->
+  <button id="undo-btn" class="undo-btn" title="Undo deletion">↶</button>
+
+  <!-- Floating Action Buttons -->
   <div class="floating-actions">
-    <button id="add-goal" title="Add Goal"><span class="btn-icon">+</span> Goal</button>
-    <button id="add-task" title="Add Task"><span class="btn-icon">+</span> Task</button>
-    <button id="add-note" title="Add Note"><span class="btn-icon">+</span> Note</button>
+    <button id="add-goal" class="action-btn"><span class="btn-icon">+</span>Goal</button>
+    <button id="add-task" class="action-btn"><span class="btn-icon">+</span>Task</button>
+    <button id="add-note" class="action-btn"><span class="btn-icon">+</span>Note</button>
   </div>
 
-  <!-- Floating Trash Dropzone (Far Bottom Right) -->
-  <div class="trash-bin" id="trash-bin" title="Drag cards or tabs here to delete">
-    <div class="trash-icon">🗑️</div>
-  </div>
+  <!-- Drag-and-Drop Trash Bin -->
+  <div class="trash-bin" title="Drag items here to delete">🗑️</div>
 
   <script src="app.js"></script>
 </body>
