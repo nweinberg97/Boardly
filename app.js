@@ -523,7 +523,7 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (ELEMENT-AWARE SNAPPING) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (OFFSET-PRESERVED CAROUSEL) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
@@ -533,37 +533,31 @@ if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
     const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
     if (tabs.length === 0) return;
 
-    const containerRect = tabsWrapper.getBoundingClientRect();
+    // Find the currently active tab or default to the first one
+    const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
+    const nextIndex = (activeIndex !== -1 ? activeIndex + 1 : 0) % tabs.length;
+
+    // Smoothly scroll to center the next tab within your existing layout
+    const targetTab = tabs[nextIndex];
+    const scrollLeftPos = targetTab.offsetLeft - (tabsWrapper.clientWidth / 2) + (targetTab.clientWidth / 2);
     
-    // Find the next tab that extends past the right edge of the visible wrapper
-    let targetTab = tabs.find(tab => tab.getBoundingClientRect().left > containerRect.right - 10);
-
-    // If no tab is cut off on the right, loop smoothly back to the first tab
-    if (!targetTab) {
-      targetTab = tabs[0];
-    }
-
-    targetTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    tabsWrapper.scrollTo({ left: scrollLeftPos, behavior: 'smooth' });
   });
 
   scrollLeftBtn.addEventListener('click', () => {
     const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
     if (tabs.length === 0) return;
 
-    const containerRect = tabsWrapper.getBoundingClientRect();
+    const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
+    const prevIndex = (activeIndex !== -1 ? activeIndex - 1 + tabs.length : tabs.length - 1) % tabs.length;
+
+    const targetTab = tabs[prevIndex];
+    const scrollLeftPos = targetTab.offsetLeft - (tabsWrapper.clientWidth / 2) + (targetTab.clientWidth / 2);
     
-    // Find all tabs whose right edge is hidden to the left
-    const hiddenTabs = tabs.filter(tab => tab.getBoundingClientRect().right < containerRect.left + 10);
-    let targetTab = hiddenTabs[hiddenTabs.length - 1];
-
-    // If we are already at the beginning, loop smoothly around to the final tab
-    if (!targetTab) {
-      targetTab = tabs[tabs.length - 1];
-    }
-
-    targetTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    tabsWrapper.scrollTo({ left: scrollLeftPos, behavior: 'smooth' });
   });
 }
+
 /* ---------- ADD TAB ---------- */
 
 document.getElementById('add-tab').addEventListener('click', () => {
