@@ -387,37 +387,73 @@ function renderTabs() {
       showColorMenu(e, tab);
     });
 
-    button.addEventListener('dblclick', (e) => {
+   button.addEventListener('dblclick', (e) => {
       e.stopPropagation();
 
-      const newName = prompt('Rename tab:', tab);
-      if (!newName) return;
+      const textSpan = button.querySelector('.tab-text');
+      if (!textSpan) return;
 
-      const formatted = newName.toLowerCase().trim();
-      if (!formatted || formatted === tab) return;
+      const currentText = tab;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'tab-input';
+      input.value = currentText;
 
-      if (state.tabs.includes(formatted)) {
-        alert('Tab already exists');
-        return;
-      }
+      textSpan.replaceWith(input);
+      input.focus();
+      input.select();
 
-      state.tabs = state.tabs.map(t => t === tab ? formatted : t);
-      state.boards[formatted] = state.boards[tab] || [];
-      delete state.boards[tab];
+      let isSubmitted = false;
 
-      if (activeTabColors.has(tab)) {
-        activeTabColors.set(formatted, activeTabColors.get(tab));
-        activeTabColors.delete(tab);
-        saveColorsToStorage();
-      }
+      const commitChange = () => {
+        if (isSubmitted) return;
+        isSubmitted = true;
 
-      if (state.currentBoard === tab) {
-        state.currentBoard = formatted;
-      }
+        const newName = input.value.toLowerCase().trim();
+        if (!newName || newName === currentText) {
+          renderTabs();
+          return;
+        }
 
-      saveState();
-      renderTabs();
-      renderBoard();
+        if (state.tabs.includes(newName)) {
+          alert('Tab already exists');
+          renderTabs();
+          return;
+        }
+
+        state.tabs = state.tabs.map(t => t === currentText ? newName : t);
+        state.boards[newName] = state.boards[currentText] || [];
+        delete state.boards[currentText];
+
+        if (activeTabColors.has(currentText)) {
+          activeTabColors.set(newName, activeTabColors.get(currentText));
+          activeTabColors.delete(currentText);
+          saveColorsToStorage();
+        }
+
+        if (state.currentBoard === currentText) {
+          state.currentBoard = newName;
+        }
+
+        saveState();
+        renderTabs();
+        renderBoard();
+      };
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commitChange();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          isSubmitted = true;
+          renderTabs();
+        }
+      });
+
+      input.addEventListener('blur', () => {
+        commitChange();
+      });
     });
 
     button.addEventListener('dragstart', (e) => {
@@ -460,8 +496,6 @@ function renderTabs() {
     tabsContainer.appendChild(button);
   });
 }
-
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS ---------- */
 
 /* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (LOOPING) ---------- */
 
