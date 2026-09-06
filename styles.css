@@ -33,6 +33,32 @@ body {
   flex: 0 0 15%;
 }
 
+/* Toolbar Scroll Buttons */
+.toolbar-scroll-btn {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4b5563;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  z-index: 5;
+  margin: 0 4px;
+}
+
+.toolbar-scroll-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
 /* Centers the tab list horizontally across the screen while limiting maximum size expansion */
 .tabs-wrapper {
   display: flex;
@@ -95,6 +121,20 @@ body {
   background: #f3f4f6;
   color: #1f2937;
   border-color: #d1d5db;
+}
+
+/* Inline tab editing input field styling */
+.tab-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: inherit;
+  width: 90px;
+  padding: 0;
+  margin: 0;
 }
 
 /* Functional Color Indicator Dot Configuration */
@@ -229,17 +269,17 @@ body {
   flex-shrink: 0;
 }
 
-/* Color Matching Rules for Card Generation Nodes */
+/* Color Matching Rules for Card Generation Nodes with High Contrast */
 .goal-icon {
-  background: #93c5fd; /* Soft Blue */
+  background: #2563eb; /* Deep Blue Contrast */
   color: #ffffff;
 }
 .task-icon {
-  background: #ffffff; /* Explicit White Background Badge */
-  color: #000000;    /* Contrast rule: + symbol stays sharp black */
+  background: #374151; /* Charcoal Contrast */
+  color: #ffffff;    
 }
 .note-icon {
-  background: #ffee8c; /* Soft Yellow */
+  background: #ca8a04; /* Darker Amber Contrast */
   color: #ffffff;
 }
 
@@ -253,13 +293,13 @@ body {
   background-color: #f4f5f7; /* Keep neutral canvas baseline */
 }
 
-/* Architectural Top-Left Anchor Active Color Tag Indicator */
+/* Architectural Top-Left Anchor Active Color Tag Indicator (25% Toolbar Width) */
 #board::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 48px;
+  width: 25vw;
   height: 5px;
   background-color: var(--active-board-accent, #1e252b);
   border-radius: 0 0 4px 0;
