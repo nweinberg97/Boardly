@@ -524,38 +524,33 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (OFFSET-PRESERVED CAROUSEL) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (ROBUST SMOOTH CAROUSEL) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
   scrollRightBtn.addEventListener('click', () => {
-    const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
-    if (tabs.length === 0) return;
+    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
+    if (maxScrollLeft <= 0) return; // No scrolling needed if tabs fit
 
-    // Find the currently active tab or default to the first one
-    const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
-    const nextIndex = (activeIndex !== -1 ? activeIndex + 1 : 0) % tabs.length;
-
-    // Smoothly scroll to center the next tab within your existing layout
-    const targetTab = tabs[nextIndex];
-    const scrollLeftPos = targetTab.offsetLeft - (tabsWrapper.clientWidth / 2) + (targetTab.clientWidth / 2);
-    
-    tabsWrapper.scrollTo({ left: scrollLeftPos, behavior: 'smooth' });
+    // Using a tight 2px tolerance to prevent sub-pixel rounding traps
+    if (tabsWrapper.scrollLeft >= maxScrollLeft - 2) {
+      tabsWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+    }
   });
 
   scrollLeftBtn.addEventListener('click', () => {
-    const tabs = Array.from(tabsContainer.querySelectorAll('.tab'));
-    if (tabs.length === 0) return;
+    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
+    if (maxScrollLeft <= 0) return;
 
-    const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
-    const prevIndex = (activeIndex !== -1 ? activeIndex - 1 + tabs.length : tabs.length - 1) % tabs.length;
-
-    const targetTab = tabs[prevIndex];
-    const scrollLeftPos = targetTab.offsetLeft - (tabsWrapper.clientWidth / 2) + (targetTab.clientWidth / 2);
-    
-    tabsWrapper.scrollTo({ left: scrollLeftPos, behavior: 'smooth' });
+    if (tabsWrapper.scrollLeft <= 2) {
+      tabsWrapper.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+    } else {
+      tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+    }
   });
 }
 
