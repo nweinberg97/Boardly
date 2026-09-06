@@ -461,11 +461,14 @@ function renderTabs() {
   });
 }
 
-/* ---------- HORIZONTAL SCROLL MANAGEMENT VIA MOUSE WHEEL ---------- */
+/* ---------- TOOLBAR ARROW NAVIGATION ---------- */
 
-tabsWrapper.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  tabsWrapper.scrollLeft += e.deltaY;
+document.getElementById('scroll-left').addEventListener('click', () => {
+  tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+});
+
+document.getElementById('scroll-right').addEventListener('click', () => {
+  tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
 });
 
 /* ---------- ADD TAB ---------- */
