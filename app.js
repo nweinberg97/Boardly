@@ -1,26 +1,67 @@
 const board = document.getElementById('board');
 const tabsContainer = document.getElementById('tabs');
 const tabsWrapper = document.getElementById('tabs-wrapper');
+const undoBtn = document.getElementById('undo-btn');
 
 const trashSound = new Audio('sounds/plastic-crunch-83779.mp3');
 
-// Vibrant Broad-Spectrum Palette for the Top Navigation row dots
-const vibrantColors = [
-  '#ef4444', 
-  '#3b82f6', 
-  '#10b981', 
-  '#f59e0b', 
-  '#8b5cf6', 
-  '#ec4899', 
-  '#06b6d4', 
-  '#f97316', 
-  '#64748b', 
-  '#1e252b'
+// Softer, highly desaturated pastel palette to eliminate aggressive tones
+const mutedColors = [
+  '#93c5fd', // Soft Blue
+  '#86efac', // Soft Mint
+  '#fde047', // Muted Butter
+  '#d8b4fe', // Soft Lavender
+  '#f472b6', // Soft Rose
+  '#67e8f9', // Soft Cyan
+  '#fdba74', // Soft Peach
+  '#cbd5e1', // Muted Slate
+  '#94a3b8', // Medium Slate
+  '#334155'  // Deep Slate
 ];
 
 function getDefaultColor(tabIndex) {
-  return vibrantColors[tabIndex % vibrantColors.length];
+  return mutedColors[tabIndex % mutedColors.length];
 }
+
+/* ---------- UNDO HISTORY STACK ---------- */
+
+let undoStack = [];
+
+function pushUndoAction(action) {
+  undoStack.push(action);
+  updateUndoButtonVisual();
+}
+
+function updateUndoButtonVisual() {
+  if (undoBtn) {
+    undoBtn.style.opacity = undoStack.length > 0 ? '1' : '0.35';
+    undoBtn.title = undoStack.length > 0 ? "Undo last deletion" : "Nothing to undo";
+  }
+}
+
+undoBtn.addEventListener('click', () => {
+  if (undoStack.length === 0) return;
+  const action = undoStack.pop();
+
+  if (action.type === 'card') {
+    ensureBoardExists(action.boardName);
+    state.boards[action.boardName].splice(action.index, 0, action.cardData);
+  } else if (action.type === 'tab') {
+    if (!state.tabs.includes(action.tabName)) {
+      state.tabs.splice(action.tabIndex, 0, action.tabName);
+      state.boards[action.tabName] = action.boardData || [];
+      if (action.color) {
+        activeTabColors.set(action.tabName, action.color);
+        saveColorsToStorage();
+      }
+    }
+  }
+
+  saveState();
+  renderTabs();
+  renderBoard();
+  updateUndoButtonVisual();
+});
 
 /* ---------- ISOLATED COLOR STORAGE ---------- */
 
@@ -43,7 +84,6 @@ function saveColorsToStorage() {
 
 const state = JSON.parse(localStorage.getItem('boardly-data')) || {
   currentBoard: 'health',
-
   tabs: [
     'health',
     'admin',
@@ -53,7 +93,6 @@ const state = JSON.parse(localStorage.getItem('boardly-data')) || {
     'relationships',
     'passions'
   ],
-
   boards: {}
 };
 
@@ -81,7 +120,6 @@ function updateCanvasBackground() {
     ? activeTabColors.get(currentTab) 
     : getDefaultColor(tabIndex >= 0 ? tabIndex : 0);
 
-  // Smoothly sets the clean top-left accent indicator variable via architectural CSS injection
   board.style.setProperty('--active-board-accent', color);
 }
 
@@ -94,7 +132,7 @@ function renderBoard() {
   });
 }
 
-/* ---------- CARDS (CLEAN STRUCTURAL MARKUP - NO DOTS) ---------- */
+/* ---------- CARDS ---------- */
 
 function createCard(type) {
   const spawnLeft = (window.innerWidth / 2) - 120;
@@ -109,7 +147,24 @@ function createCard(type) {
   };
 
   getCurrentBoardData().push(card);
+  saveState();
+  renderBoard();
+}
 
+function deleteCard(cardId) {
+  const boardData = getCurrentBoardData();
+  const index = boardData.findIndex(c => c.id === cardId);
+  if (index === -1) return;
+
+  const cardData = boardData[index];
+  pushUndoAction({
+    type: 'card',
+    boardName: state.currentBoard,
+    cardData: { ...cardData },
+    index
+  });
+
+  state.boards[state.currentBoard] = boardData.filter(c => c.id !== cardId);
   saveState();
   renderBoard();
 }
@@ -120,10 +175,20 @@ function createCardElement(cardData) {
   card.style.left = `${cardData.x}px`;
   card.style.top = `${cardData.y}px`;
 
-  // Eliminated .card-header and color status dots completely to maximize workspace cleanliness
+  // Hover delete button (×)
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'card-delete';
+  deleteBtn.innerHTML = '×';
+  deleteBtn.title = 'Delete card';
+  deleteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    deleteCard(cardData.id);
+  });
+  card.appendChild(deleteBtn);
+
   const textarea = document.createElement('textarea');
   textarea.value = cardData.text;
-  textarea.placeholder = "Write a task...";
+  textarea.placeholder = "Write something...";
 
   textarea.addEventListener('input', () => {
     cardData.text = textarea.value;
@@ -132,13 +197,6 @@ function createCardElement(cardData) {
 
   card.appendChild(textarea);
   enableDragging(card, cardData);
-
-  card.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    state.boards[state.currentBoard] = getCurrentBoardData().filter(c => c.id !== cardData.id);
-    saveState();
-    renderBoard();
-  });
 
   board.appendChild(card);
 }
@@ -189,12 +247,9 @@ function enableDragging(element, cardData) {
       element.style.pointerEvents = 'auto';
 
       if (elementUnderMouse && elementUnderMouse.closest('.trash-bin')) {
-        state.boards[state.currentBoard] = getCurrentBoardData().filter(c => c.id !== cardData.id);
+        deleteCard(cardData.id);
         trashSound.currentTime = 0;
         trashSound.play().catch(err => console.log("Audio playback prevented:", err));
-
-        saveState();
-        renderBoard();
         return; 
       }
     }
@@ -202,7 +257,7 @@ function enableDragging(element, cardData) {
   };
 
   element.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.target.tagName === 'TEXTAREA' || e.target.classList.contains('card-delete')) return;
 
     offsetX = e.clientX - element.offsetLeft;
     offsetY = e.clientY - element.offsetTop;
@@ -229,7 +284,7 @@ function showColorMenu(event, tab) {
     top: `${event.pageY}px`
   });
 
-  vibrantColors.forEach(color => {
+  mutedColors.forEach(color => {
     const swatch = document.createElement('div');
     swatch.className = 'color-swatch';
     swatch.style.backgroundColor = color;
@@ -266,13 +321,39 @@ function showColorMenu(event, tab) {
 
 /* ---------- TABS ---------- */
 
+function deleteTab(tabName) {
+  const tabIndex = state.tabs.indexOf(tabName);
+  if (tabIndex === -1) return;
+
+  pushUndoAction({
+    type: 'tab',
+    tabName,
+    tabIndex,
+    boardData: state.boards[tabName],
+    color: activeTabColors.get(tabName)
+  });
+
+  state.tabs = state.tabs.filter(t => t !== tabName);
+  delete state.boards[tabName];
+  activeTabColors.delete(tabName);
+  saveColorsToStorage();
+
+  if (state.currentBoard === tabName) {
+    state.currentBoard = state.tabs[0] || '';
+  }
+
+  saveState();
+  renderTabs();
+  renderBoard();
+}
+
 function renderTabs() {
   tabsContainer.innerHTML = '';
 
   state.tabs.forEach((tab, index) => {
     const button = document.createElement('button');
     button.classList.add('tab');
-    button.title = tab; // Native tooltip backup for collapsed names
+    button.title = tab;
 
     if (tab === state.currentBoard) {
       button.classList.add('active');
@@ -281,7 +362,18 @@ function renderTabs() {
     button.setAttribute('draggable', 'true');
 
     const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
-    button.innerHTML = `<span class="tab-dot" style="background-color: ${tabColor};"></span>${tab}`;
+    
+    // Tab inner structure with color dot, label text, and hover delete (×) button
+    button.innerHTML = `
+      <span class="tab-dot" style="background-color: ${tabColor};"></span>
+      <span class="tab-text">${tab}</span>
+      <button class="tab-delete" title="Delete tab">×</button>
+    `;
+
+    button.querySelector('.tab-delete').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteTab(tab);
+    });
 
     button.addEventListener('click', () => {
       state.currentBoard = tab;
@@ -373,14 +465,12 @@ function renderTabs() {
 
 tabsWrapper.addEventListener('wheel', (e) => {
   e.preventDefault();
-  // Translates vertical rotation into clean horizontal viewport steps
   tabsWrapper.scrollLeft += e.deltaY;
 });
 
 /* ---------- ADD TAB ---------- */
 
-document.getElementById('add-tab')
-.addEventListener('click', () => {
+document.getElementById('add-tab').addEventListener('click', () => {
   if (state.tabs.length >= 10) {
     alert('Maximum 10 tabs allowed');
     return;
@@ -405,14 +495,9 @@ document.getElementById('add-tab')
 
 /* ---------- BUTTONS ---------- */
 
-document.getElementById('add-goal')
-.addEventListener('click', () => createCard('goal'));
-
-document.getElementById('add-task')
-.addEventListener('click', () => createCard('task'));
-
-document.getElementById('add-note')
-.addEventListener('click', () => createCard('note'));
+document.getElementById('add-goal').addEventListener('click', () => createCard('goal'));
+document.getElementById('add-task').addEventListener('click', () => createCard('task'));
+document.getElementById('add-note').addEventListener('click', () => createCard('note'));
 
 /* ---------- TRASH BIN ---------- */
 
@@ -436,19 +521,9 @@ function enableTrashBin() {
     const draggedTab = e.dataTransfer.getData('text/plain');
 
     if (draggedTab && state.tabs.includes(draggedTab)) {
-      state.tabs = state.tabs.filter(t => t !== draggedTab);
-      delete state.boards[draggedTab];
-      
-      activeTabColors.delete(draggedTab);
-      saveColorsToStorage();
-
-      if (state.currentBoard === draggedTab) {
-        state.currentBoard = state.tabs[0] || '';
-      }
-
-      saveState();
-      renderTabs();
-      renderBoard();
+      deleteTab(draggedTab);
+      trashSound.currentTime = 0;
+      trashSound.play().catch(err => console.log("Audio playback prevented:", err));
     }
   });
 }
@@ -457,6 +532,7 @@ function initializeBoardly() {
   renderTabs();
   renderBoard();
   enableTrashBin();
+  updateUndoButtonVisual();
 }
 
 initializeBoardly();
