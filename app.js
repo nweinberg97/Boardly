@@ -511,7 +511,7 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (FIXED LOOPING) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (CAROUSEL FIX) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
@@ -519,7 +519,8 @@ const scrollRightBtn = document.getElementById('scroll-right');
 if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
   scrollLeftBtn.addEventListener('click', () => {
     if (tabsWrapper.scrollLeft <= 10) {
-      tabsWrapper.scrollTo({ left: tabsWrapper.scrollWidth, behavior: 'smooth' });
+      const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
+      tabsWrapper.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
     } else {
       tabsWrapper.scrollBy({ left: -180, behavior: 'smooth' });
     }
