@@ -524,32 +524,31 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (ROBUST SMOOTH CAROUSEL) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (FIXED) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
 
-if (scrollLeftBtn && scrollRightBtn && tabsWrapper) {
+if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollRightBtn.addEventListener('click', () => {
-    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
-    if (maxScrollLeft <= 0) return; // No scrolling needed if tabs fit
+    const maxScrollLeft = tabsContainer.scrollWidth - tabsContainer.clientWidth;
+    if (maxScrollLeft <= 0) return;
 
-    // Using a tight 2px tolerance to prevent sub-pixel rounding traps
-    if (tabsWrapper.scrollLeft >= maxScrollLeft - 2) {
-      tabsWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+    if (tabsContainer.scrollLeft >= maxScrollLeft - 2) {
+      tabsContainer.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
-      tabsWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+      tabsContainer.scrollBy({ left: 200, behavior: 'smooth' });
     }
   });
 
   scrollLeftBtn.addEventListener('click', () => {
-    const maxScrollLeft = tabsWrapper.scrollWidth - tabsWrapper.clientWidth;
+    const maxScrollLeft = tabsContainer.scrollWidth - tabsContainer.clientWidth;
     if (maxScrollLeft <= 0) return;
 
-    if (tabsWrapper.scrollLeft <= 2) {
-      tabsWrapper.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+    if (tabsContainer.scrollLeft <= 2) {
+      tabsContainer.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
     } else {
-      tabsWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+      tabsContainer.scrollBy({ left: -200, behavior: 'smooth' });
     }
   });
 }
