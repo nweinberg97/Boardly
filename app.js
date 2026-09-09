@@ -531,24 +531,50 @@ const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollRightBtn.addEventListener('click', () => {
-    const maxScrollLeft = tabsContainer.scrollWidth - tabsContainer.clientWidth;
-    if (maxScrollLeft <= 0) return;
+    const tabElements = tabsContainer.querySelectorAll('.tab');
+    if (tabElements.length === 0) return;
 
-    if (tabsContainer.scrollLeft >= maxScrollLeft - 2) {
-      tabsContainer.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      tabsContainer.scrollBy({ left: 200, behavior: 'smooth' });
+    // Find the currently active tab index, or default to the first
+    const activeTab = tabsContainer.querySelector('.tab.active');
+    let currentIndex = Array.from(tabElements).indexOf(activeTab);
+    if (currentIndex === -1) currentIndex = 0;
+
+    // Calculate the next tab index in a continuous loop
+    const nextIndex = (currentIndex + 1) % state.tabs.length;
+    const targetTabName = state.tabs[nextIndex];
+
+    // Update state and re-render/scroll into view smoothly
+    state.currentBoard = targetTabName;
+    saveState();
+    renderTabs();
+    renderBoard();
+
+    const newActiveTab = tabsContainer.querySelectorAll('.tab')[nextIndex];
+    if (newActiveTab) {
+      newActiveTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
     }
   });
 
   scrollLeftBtn.addEventListener('click', () => {
-    const maxScrollLeft = tabsContainer.scrollWidth - tabsContainer.clientWidth;
-    if (maxScrollLeft <= 0) return;
+    const tabElements = tabsContainer.querySelectorAll('.tab');
+    if (tabElements.length === 0) return;
 
-    if (tabsContainer.scrollLeft <= 2) {
-      tabsContainer.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
-    } else {
-      tabsContainer.scrollBy({ left: -200, behavior: 'smooth' });
+    const activeTab = tabsContainer.querySelector('.tab.active');
+    let currentIndex = Array.from(tabElements).indexOf(activeTab);
+    if (currentIndex === -1) currentIndex = 0;
+
+    // Calculate the previous tab index with proper negative modulo wrapping
+    const prevIndex = (currentIndex - 1 + state.tabs.length) % state.tabs.length;
+    const targetTabName = state.tabs[prevIndex];
+
+    state.currentBoard = targetTabName;
+    saveState();
+    renderTabs();
+    renderBoard();
+
+    const newActiveTab = tabsContainer.querySelectorAll('.tab')[prevIndex];
+    if (newActiveTab) {
+      newActiveTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
     }
   });
 }
