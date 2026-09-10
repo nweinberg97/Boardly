@@ -384,7 +384,7 @@ body {
 }
 
 .note {
-  background: #fef08a; /* Soft Muted Yellow */
+  background: #fef9c3; /* Soft Notepad Yellow */
 }
 
 /* ---------- TEXTAREA ---------- */
@@ -400,7 +400,7 @@ body {
   line-height: 1.4;
   font-family: inherit;
   color: #111827;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* ---------- UNDO BUTTON (BOTTOM LEFT) ---------- */
