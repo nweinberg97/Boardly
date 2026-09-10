@@ -383,8 +383,11 @@ function renderTabs() {
 
     button.setAttribute('draggable', 'true');
 
-    const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
+ const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
     
+    // ADD IT HERE:
+    button.style.setProperty('--tab-accent-color', tabColor);
+
     // Tab inner structure with color dot, label text, and hover delete (×) button
     button.innerHTML = `
       <span class="tab-dot" style="background-color: ${tabColor};"></span>
@@ -397,6 +400,7 @@ function renderTabs() {
       deleteTab(tab);
     });
 
+    
   let clickTimeout = null;
 
 button.addEventListener('click', (e) => {
