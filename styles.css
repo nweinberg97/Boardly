@@ -172,8 +172,7 @@ body {
   background: #111827 !important; 
   color: #ffffff !important;
   border-color: #111827;
-  border-left: 4px solid var(--active-board-accent, #111827);
-  transform: scale(1.02);
+  border-left: 4px solid var(--tab-accent-color, var(--active-board-accent, #111827));  transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: visible;
 }
