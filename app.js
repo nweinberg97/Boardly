@@ -624,8 +624,8 @@ function enableTrashBin() {
 
     if (draggedTab && state.tabs.includes(draggedTab)) {
       deleteTab(draggedTab);
-      trashSound.currentTime = 0;
-      trashSound.play().catch(err => console.log("Audio playback prevented:", err));
+      // Replaced global trashSound with a fresh instance to avoid browser blockages
+      new Audio('sounds/sounds_plastic-crunch-83779.mp3').play().catch(err => console.log("Audio playback prevented:", err));
     }
   });
 }
