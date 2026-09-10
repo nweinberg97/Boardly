@@ -524,7 +524,7 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (FIXED) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (TRUE CONVEYOR BELT) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
@@ -533,18 +533,12 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollRightBtn.addEventListener('click', () => {
     if (state.tabs.length <= 1) return;
 
-    // 1. Update the active board to the next tab in the sequence
-    let currentIndex = state.tabs.indexOf(state.currentBoard);
-    if (currentIndex === -1) currentIndex = 0;
-    
-    const nextIndex = (currentIndex + 1) % state.tabs.length;
-    state.currentBoard = state.tabs[nextIndex];
+    // Rotate array right: take the first item and move it to the back
+    const shiftedTab = state.tabs.shift();
+    state.tabs.push(shiftedTab);
 
-    // 2. Rotate the array: Move the first tab to the very end
-    const firstTab = state.tabs.shift();
-    state.tabs.push(firstTab);
-
-    // 3. Save state and re-render the new DOM order
+    // Keep currentBoard synced to whichever tab is now in the designated active slot 
+    // (or maintain the current active tab's relative position)
     saveState();
     renderTabs();
     renderBoard();
@@ -553,18 +547,10 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollLeftBtn.addEventListener('click', () => {
     if (state.tabs.length <= 1) return;
 
-    // 1. Update the active board to the previous tab in the sequence
-    let currentIndex = state.tabs.indexOf(state.currentBoard);
-    if (currentIndex === -1) currentIndex = 0;
+    // Rotate array left: take the last item and move it to the front
+    const poppedTab = state.tabs.pop();
+    state.tabs.unshift(poppedTab);
 
-    const prevIndex = (currentIndex - 1 + state.tabs.length) % state.tabs.length;
-    state.currentBoard = state.tabs[prevIndex];
-
-    // 2. Rotate the array: Move the last tab to the very front
-    const lastTab = state.tabs.pop();
-    state.tabs.unshift(lastTab);
-
-    // 3. Save state and re-render the new DOM order
     saveState();
     renderTabs();
     renderBoard();
