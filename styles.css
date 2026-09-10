@@ -411,6 +411,12 @@ body {
   line-height: 1.4;
   font-family: inherit;
   color: #111827;
+  
+  /* CHANGED: Hide scrollbar by default, show only on card hover */
+  overflow-y: hidden;
+}
+
+.card:hover textarea {
   overflow-y: auto;
 }
 
