@@ -6,22 +6,22 @@ const undoBtn = document.getElementById('undo-btn');
 const trashSound = new Audio('sounds/sounds_plastic-crunch-83779.mp3');
 trashSound.preload = 'auto';
 
-// Softer, highly desaturated pastel palette to eliminate aggressive tones
-const mutedColors = [
-  '#93c5fd', // Soft Blue
-  '#86efac', // Soft Mint
-  '#fde047', // Muted Butter
-  '#d8b4fe', // Soft Lavender
-  '#f472b6', // Soft Rose
-  '#67e8f9', // Soft Cyan
-  '#fdba74', // Soft Peach
-  '#cbd5e1', // Muted Slate
-  '#94a3b8', // Medium Slate
-  '#334155'  // Deep Slate
+// 10-Color Airbnb-Inspired Low-Saturation Palette
+const boardColors = [
+  '#475569', // 1: Muted Charcoal
+  '#658a77', // 2: Dusty Sage
+  '#b47558', // 3: Soft Terracotta
+  '#5a73a2', // 4: Muted Indigo
+  '#c29b38', // 5: Soft Ochre
+  '#b86b85', // 6: Dusty Rose
+  '#528892', // 7: Soft Teal
+  '#8b7bb4', // 8: Muted Lavender
+  '#b89b72', // 9: Warm Sand
+  '#64748b'  // 10: Slate Gray
 ];
 
-function getDefaultColor(tabIndex) {
-  return mutedColors[tabIndex % mutedColors.length];
+function getDefaultColor(index) {
+  return boardColors[index % boardColors.length];
 }
 
 /* ---------- UNDO HISTORY STACK ---------- */
