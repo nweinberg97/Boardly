@@ -524,7 +524,7 @@ button.addEventListener('dblclick', (e) => {
   });
 }
 
-/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (TRUE CONVEYOR BELT) ---------- */
+/* ---------- TOOLBAR SCROLL NAVIGATION BUTTONS (CORRECTED CONVEYOR BELT) ---------- */
 
 const scrollLeftBtn = document.getElementById('scroll-left');
 const scrollRightBtn = document.getElementById('scroll-right');
@@ -533,12 +533,11 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollRightBtn.addEventListener('click', () => {
     if (state.tabs.length <= 1) return;
 
-    // Rotate array right: take the first item and move it to the back
-    const shiftedTab = state.tabs.shift();
-    state.tabs.push(shiftedTab);
+    // Clicking RIGHT should move the conveyor belt to the right:
+    // Take the last item and move it to the front.
+    const poppedTab = state.tabs.pop();
+    state.tabs.unshift(poppedTab);
 
-    // Keep currentBoard synced to whichever tab is now in the designated active slot 
-    // (or maintain the current active tab's relative position)
     saveState();
     renderTabs();
     renderBoard();
@@ -547,9 +546,10 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollLeftBtn.addEventListener('click', () => {
     if (state.tabs.length <= 1) return;
 
-    // Rotate array left: take the last item and move it to the front
-    const poppedTab = state.tabs.pop();
-    state.tabs.unshift(poppedTab);
+    // Clicking LEFT should move the conveyor belt to the left:
+    // Take the first item and move it to the back.
+    const shiftedTab = state.tabs.shift();
+    state.tabs.push(shiftedTab);
 
     saveState();
     renderTabs();
