@@ -531,51 +531,43 @@ const scrollRightBtn = document.getElementById('scroll-right');
 
 if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
   scrollRightBtn.addEventListener('click', () => {
-    const tabElements = tabsContainer.querySelectorAll('.tab');
-    if (tabElements.length === 0) return;
+    if (state.tabs.length <= 1) return;
 
-    // Find the currently active tab index, or default to the first
-    const activeTab = tabsContainer.querySelector('.tab.active');
-    let currentIndex = Array.from(tabElements).indexOf(activeTab);
+    // 1. Update the active board to the next tab in the sequence
+    let currentIndex = state.tabs.indexOf(state.currentBoard);
     if (currentIndex === -1) currentIndex = 0;
-
-    // Calculate the next tab index in a continuous loop
+    
     const nextIndex = (currentIndex + 1) % state.tabs.length;
-    const targetTabName = state.tabs[nextIndex];
+    state.currentBoard = state.tabs[nextIndex];
 
-    // Update state and re-render/scroll into view smoothly
-    state.currentBoard = targetTabName;
+    // 2. Rotate the array: Move the first tab to the very end
+    const firstTab = state.tabs.shift();
+    state.tabs.push(firstTab);
+
+    // 3. Save state and re-render the new DOM order
     saveState();
     renderTabs();
     renderBoard();
-
-    const newActiveTab = tabsContainer.querySelectorAll('.tab')[nextIndex];
-    if (newActiveTab) {
-      newActiveTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-    }
   });
 
   scrollLeftBtn.addEventListener('click', () => {
-    const tabElements = tabsContainer.querySelectorAll('.tab');
-    if (tabElements.length === 0) return;
+    if (state.tabs.length <= 1) return;
 
-    const activeTab = tabsContainer.querySelector('.tab.active');
-    let currentIndex = Array.from(tabElements).indexOf(activeTab);
+    // 1. Update the active board to the previous tab in the sequence
+    let currentIndex = state.tabs.indexOf(state.currentBoard);
     if (currentIndex === -1) currentIndex = 0;
 
-    // Calculate the previous tab index with proper negative modulo wrapping
     const prevIndex = (currentIndex - 1 + state.tabs.length) % state.tabs.length;
-    const targetTabName = state.tabs[prevIndex];
+    state.currentBoard = state.tabs[prevIndex];
 
-    state.currentBoard = targetTabName;
+    // 2. Rotate the array: Move the last tab to the very front
+    const lastTab = state.tabs.pop();
+    state.tabs.unshift(lastTab);
+
+    // 3. Save state and re-render the new DOM order
     saveState();
     renderTabs();
     renderBoard();
-
-    const newActiveTab = tabsContainer.querySelectorAll('.tab')[prevIndex];
-    if (newActiveTab) {
-      newActiveTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-    }
   });
 }
 
