@@ -306,7 +306,7 @@ function showColorMenu(event, tab) {
     top: `${event.pageY}px`
   });
 
-boardColors.forEach(color => {
+  boardColors.forEach(color => {
     const swatch = document.createElement('div');
     swatch.className = 'color-swatch';
     swatch.style.backgroundColor = color;
