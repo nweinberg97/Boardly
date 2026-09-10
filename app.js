@@ -542,9 +542,9 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
     if (state.tabs.length <= 1) return;
 
     // Clicking RIGHT should move the conveyor belt to the right:
-    // Take the last item and move it to the front.
-    const poppedTab = state.tabs.pop();
-    state.tabs.unshift(poppedTab);
+    // Take the first item and move it to the back.
+    const shiftedTab = state.tabs.shift();
+    state.tabs.push(shiftedTab);
 
     saveState();
     renderTabs();
@@ -555,9 +555,9 @@ if (scrollLeftBtn && scrollRightBtn && tabsContainer) {
     if (state.tabs.length <= 1) return;
 
     // Clicking LEFT should move the conveyor belt to the left:
-    // Take the first item and move it to the back.
-    const shiftedTab = state.tabs.shift();
-    state.tabs.push(shiftedTab);
+    // Take the last item and move it to the front.
+    const poppedTab = state.tabs.pop();
+    state.tabs.unshift(poppedTab);
 
     saveState();
     renderTabs();
