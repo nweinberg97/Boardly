@@ -109,6 +109,14 @@ const state = JSON.parse(localStorage.getItem('boardly-data')) || {
   boards: {}
 };
 
+// Lock permanent colors to the default tab names on first load
+state.tabs.forEach((tab, index) => {
+  if (!activeTabColors.has(tab)) {
+    activeTabColors.set(tab, getDefaultColor(index));
+  }
+});
+saveColorsToStorage();
+
 function saveState() {
   localStorage.setItem('boardly-data', JSON.stringify(state));
 }
@@ -577,6 +585,10 @@ document.getElementById('add-tab').addEventListener('click', () => {
 
   state.tabs.push(formatted);
   state.boards[formatted] = [];
+  
+  // Assign a permanent color locked to the new tab's name
+  activeTabColors.set(formatted, getDefaultColor(state.tabs.length - 1));
+  saveColorsToStorage();
 
   saveState();
   renderTabs();
