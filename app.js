@@ -3,7 +3,8 @@ const tabsContainer = document.getElementById('tabs');
 const tabsWrapper = document.getElementById('tabs-wrapper');
 const undoBtn = document.getElementById('undo-btn');
 
-const trashSound = new Audio('sounds/plastic-crunch-83779.mp3');
+const trashSound = new Audio('sounds/sounds_plastic-crunch-83779.mp3');
+trashSound.preload = 'auto';
 
 // Softer, highly desaturated pastel palette to eliminate aggressive tones
 const mutedColors = [
