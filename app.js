@@ -314,25 +314,17 @@ function renderTabs() {
     const isActive = tab === state.currentBoard;
     if (isActive) {
       button.classList.add('active');
+      button.style.backgroundColor = '#000000';
+      button.style.color = '#ffffff';
+    } else {
+      button.style.backgroundColor = '#eef0f2'; // Clean, subtle neutral grey
+      button.style.color = '#1a1a1a';
     }
 
     button.setAttribute('draggable', 'true');
 
-    const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
-    
-    // Apply background and text colors based on active state
-    if (isActive) {
-      button.style.backgroundColor = '#000000';
-      button.style.color = '#ffffff';
-    } else {
-      button.style.backgroundColor = tabColor;
-      button.style.color = '#000000';
-    }
-
-    button.style.setProperty('--tab-accent-color', tabColor);
-
-    // Active tab gets a white dot; inactive tabs get a black dot
-    const dotColor = isActive ? '#ffffff' : '#000000';
+    // Active tab gets a white dot; inactive tabs get a clean dark grey dot
+    const dotColor = isActive ? '#ffffff' : '#666666';
 
     button.innerHTML = `
       <span class="tab-dot" style="background-color: ${dotColor};"></span>
@@ -404,12 +396,6 @@ function renderTabs() {
         state.tabs = state.tabs.map(t => t === currentText ? newName : t);
         state.boards[newName] = state.boards[currentText] || [];
         delete state.boards[currentText];
-
-        if (activeTabColors.has(currentText)) {
-          activeTabColors.set(newName, activeTabColors.get(currentText));
-          activeTabColors.delete(currentText);
-          saveColorsToStorage();
-        }
 
         if (state.currentBoard === currentText) {
           state.currentBoard = newName;
