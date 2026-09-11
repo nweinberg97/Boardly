@@ -306,7 +306,7 @@ function deleteTab(tabName) {
 function renderTabs() {
   tabsContainer.innerHTML = '';
 
-  state.tabs.forEach((tab, index) => {
+  state.tabs.forEach((tab) => {
     const button = document.createElement('button');
     button.classList.add('tab');
     button.title = tab;
@@ -317,14 +317,14 @@ function renderTabs() {
       button.style.backgroundColor = '#000000';
       button.style.color = '#ffffff';
     } else {
-      button.style.backgroundColor = '#eef0f2'; // Clean, subtle neutral grey
-      button.style.color = '#1a1a1a';
+      button.style.backgroundColor = '#f1f3f5'; // Subtle neutral grey pill
+      button.style.color = '#212529';
     }
 
     button.setAttribute('draggable', 'true');
 
-    // Active tab gets a white dot; inactive tabs get a clean dark grey dot
-    const dotColor = isActive ? '#ffffff' : '#666666';
+    // Active tab gets a white dot; inactive tabs get a clean muted grey dot
+    const dotColor = isActive ? '#ffffff' : '#adb5bd';
 
     button.innerHTML = `
       <span class="tab-dot" style="background-color: ${dotColor};"></span>
