@@ -311,20 +311,31 @@ function renderTabs() {
     button.classList.add('tab');
     button.title = tab;
 
-    if (tab === state.currentBoard) {
+    const isActive = tab === state.currentBoard;
+    if (isActive) {
       button.classList.add('active');
     }
 
     button.setAttribute('draggable', 'true');
 
- const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
+    const tabColor = activeTabColors.has(tab) ? activeTabColors.get(tab) : getDefaultColor(index);
     
-    // ADD IT HERE:
+    // Apply background and text colors based on active state
+    if (isActive) {
+      button.style.backgroundColor = '#000000';
+      button.style.color = '#ffffff';
+    } else {
+      button.style.backgroundColor = tabColor;
+      button.style.color = '#000000';
+    }
+
     button.style.setProperty('--tab-accent-color', tabColor);
 
-    // Tab inner structure with color dot, label text, and hover delete (×) button
+    // Active tab gets a white dot; inactive tabs get a black dot
+    const dotColor = isActive ? '#ffffff' : '#000000';
+
     button.innerHTML = `
-      <span class="tab-dot" style="background-color: ${tabColor};"></span>
+      <span class="tab-dot" style="background-color: ${dotColor};"></span>
       <span class="tab-text">${tab}</span>
       <button class="tab-delete" title="Delete tab">×</button>
     `;
@@ -334,97 +345,97 @@ function renderTabs() {
       deleteTab(tab);
     });
 
-    
-  let clickTimeout = null;
+    let clickTimeout = null;
 
-button.addEventListener('click', (e) => {
-  if (clickTimeout) {
-    clearTimeout(clickTimeout);
-    clickTimeout = null;
-    return;
-  }
+    button.addEventListener('click', (e) => {
+      if (clickTimeout) {
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        return;
+      }
 
-  clickTimeout = setTimeout(() => {
-    clickTimeout = null;
-    state.currentBoard = tab;
-    saveState();
-    renderTabs();
-    renderBoard();
-  }, 250);
-});
+      clickTimeout = setTimeout(() => {
+        clickTimeout = null;
+        state.currentBoard = tab;
+        saveState();
+        renderTabs();
+        renderBoard();
+      }, 250);
+    });
 
-button.addEventListener('dblclick', (e) => {
-  e.stopPropagation();
-  if (clickTimeout) {
-    clearTimeout(clickTimeout);
-    clickTimeout = null;
-  }
+    button.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (clickTimeout) {
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+      }
 
-  const textSpan = button.querySelector('.tab-text');
-  if (!textSpan) return;
+      const textSpan = button.querySelector('.tab-text');
+      if (!textSpan) return;
 
-  const currentText = tab;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.className = 'tab-input';
-  input.value = currentText;
+      const currentText = tab;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'tab-input';
+      input.value = currentText;
 
-  textSpan.replaceWith(input);
-  input.focus();
-  input.select();
+      textSpan.replaceWith(input);
+      input.focus();
+      input.select();
 
-  let isSubmitted = false;
+      let isSubmitted = false;
 
-  const commitChange = () => {
-    if (isSubmitted) return;
-    isSubmitted = true;
+      const commitChange = () => {
+        if (isSubmitted) return;
+        isSubmitted = true;
 
-    const newName = input.value.toLowerCase().trim();
-    if (!newName || newName === currentText) {
-      renderTabs();
-      return;
-    }
+        const newName = input.value.toLowerCase().trim();
+        if (!newName || newName === currentText) {
+          renderTabs();
+          return;
+        }
 
-    if (state.tabs.includes(newName)) {
-      alert('Tab already exists');
-      renderTabs();
-      return;
-    }
+        if (state.tabs.includes(newName)) {
+          alert('Tab already exists');
+          renderTabs();
+          return;
+        }
 
-    state.tabs = state.tabs.map(t => t === currentText ? newName : t);
-    state.boards[newName] = state.boards[currentText] || [];
-    delete state.boards[currentText];
+        state.tabs = state.tabs.map(t => t === currentText ? newName : t);
+        state.boards[newName] = state.boards[currentText] || [];
+        delete state.boards[currentText];
 
-    if (activeTabColors.has(currentText)) {
-      activeTabColors.set(newName, activeTabColors.get(currentText));
-      activeTabColors.delete(currentText);
-      saveColorsToStorage();
-    }
+        if (activeTabColors.has(currentText)) {
+          activeTabColors.set(newName, activeTabColors.get(currentText));
+          activeTabColors.delete(currentText);
+          saveColorsToStorage();
+        }
 
-    if (state.currentBoard === currentText) {
-      state.currentBoard = newName;
-    }
+        if (state.currentBoard === currentText) {
+          state.currentBoard = newName;
+        }
 
-    saveState();
-    renderTabs();
-    renderBoard();
-  };
+        saveState();
+        renderTabs();
+        renderBoard();
+      };
 
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      commitChange();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      isSubmitted = true;
-      renderTabs();
-    }
-  });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commitChange();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          isSubmitted = true;
+          renderTabs();
+        }
+      });
 
-  input.addEventListener('blur', () => {
-    commitChange();
-  });
-});
+      input.addEventListener('blur', () => {
+        commitChange();
+      });
+    });
+
     button.addEventListener('dragstart', (e) => {
       button.classList.add('dragging');
       e.dataTransfer.setData('text/plain', tab);
