@@ -6,23 +6,6 @@ const undoBtn = document.getElementById('undo-btn');
 const trashSound = new Audio('sounds/sounds_plastic-crunch-83779.mp3');
 trashSound.preload = 'auto';
 
-// 10-Color Airbnb-Inspired Low-Saturation Palette
-const boardColors = [
-  '#475569', // 1: Muted Charcoal
-  '#658a77', // 2: Dusty Sage
-  '#b47558', // 3: Soft Terracotta
-  '#5a73a2', // 4: Muted Indigo
-  '#c29b38', // 5: Soft Ochre
-  '#b86b85', // 6: Dusty Rose
-  '#528892', // 7: Soft Teal
-  '#8b7bb4', // 8: Muted Lavender
-  '#b89b72', // 9: Warm Sand
-  '#64748b'  // 10: Slate Gray
-];
-
-function getDefaultColor(index) {
-  return boardColors[index % boardColors.length];
-}
 
 /* ---------- UNDO HISTORY STACK ---------- */
 
@@ -292,55 +275,6 @@ function enableDragging(element, cardData) {
   });
 }
 
-/* ---------- POPUP COLOR PICKER ---------- */
-
-function showColorMenu(event, tab) {
-  const existing = document.querySelector('.color-menu');
-  if (existing) existing.remove();
-
-  const menu = document.createElement('div');
-  menu.className = 'color-menu';
-
-  Object.assign(menu.style, {
-    left: `${event.pageX}px`,
-    top: `${event.pageY}px`
-  });
-
-  boardColors.forEach(color => {
-    const swatch = document.createElement('div');
-    swatch.className = 'color-swatch';
-    swatch.style.backgroundColor = color;
-
-    swatch.addEventListener('click', (e) => {
-      e.stopPropagation();
-      activeTabColors.set(tab, color);
-      saveColorsToStorage();
-      renderTabs();
-      updateCanvasBackground();
-      cleanupMenu();
-    });
-
-    menu.appendChild(swatch);
-  });
-
-  document.body.appendChild(menu);
-
-  const closeOnOutsideClick = (e) => {
-    if (!menu.contains(e.target)) {
-      cleanupMenu();
-    }
-  };
-
-  function cleanupMenu() {
-    menu.remove();
-    document.removeEventListener('mousedown', closeOnOutsideClick);
-  }
-
-  setTimeout(() => {
-    document.addEventListener('mousedown', closeOnOutsideClick);
-  }, 20);
-}
-
 /* ---------- TABS ---------- */
 
 function deleteTab(tabName) {
@@ -417,11 +351,6 @@ button.addEventListener('click', (e) => {
     renderTabs();
     renderBoard();
   }, 250);
-});
-
-button.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-  showColorMenu(e, tab);
 });
 
 button.addEventListener('dblclick', (e) => {
