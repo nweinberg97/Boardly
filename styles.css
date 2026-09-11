@@ -172,7 +172,7 @@ body {
   background: #111827 !important; 
   color: #ffffff !important;
   border-color: #111827;
-  border-left: 4px solid var(--tab-accent-color, var(--active-board-accent, #111827));  transform: scale(1.02);
+  transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: visible;
 }
@@ -304,29 +304,6 @@ body {
   overflow: hidden;
   background-color: #f4f5f7;
 }
-
-/* Full-Width 100vw Gradient Accent Line Beneath Topbar */
-#board::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: 4px;
-  background: linear-gradient(
-    90deg, 
-    transparent 0%, 
-    var(--active-board-accent, #475569) 20%, 
-    var(--active-board-accent, #475569) 80%, 
-    transparent 100%
-  );
-  z-index: 10;
-  pointer-events: none;
-  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
 
 /* ---------- CARDS ---------- */
 
