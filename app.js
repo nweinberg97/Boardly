@@ -34,9 +34,13 @@ undoBtn.addEventListener('click', () => {
     if (!state.tabs.includes(action.tabName)) {
       state.tabs.splice(action.tabIndex, 0, action.tabName);
       state.boards[action.tabName] = action.boardData || [];
+      if (action.color) {
+        activeTabColors.set(action.tabName, action.color);
+        saveColorsToStorage();
+      }
     }
   }
-  
+
   saveState();
   renderTabs();
   renderBoard();
@@ -56,6 +60,23 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
+/* ---------- ISOLATED COLOR STORAGE ---------- */
+
+let savedColors;
+try {
+  savedColors = JSON.parse(localStorage.getItem('boardly-tab-palette'));
+} catch (e) {
+  console.error("Color parsing error, resetting palette state:", e);
+  savedColors = null;
+}
+
+const activeTabColors = new Map(savedColors ? Object.entries(savedColors) : null);
+
+function saveColorsToStorage() {
+  const colorObject = Object.fromEntries(activeTabColors);
+  localStorage.setItem('boardly-tab-palette', JSON.stringify(colorObject));
+}
+
 /* ---------- STATE ---------- */
 
 const state = JSON.parse(localStorage.getItem('boardly-data')) || {
@@ -71,6 +92,14 @@ const state = JSON.parse(localStorage.getItem('boardly-data')) || {
   ],
   boards: {}
 };
+
+// Lock permanent colors to the default tab names on first load
+state.tabs.forEach((tab, index) => {
+  if (!activeTabColors.has(tab)) {
+    activeTabColors.set(tab, getDefaultColor(index));
+  }
+});
+saveColorsToStorage();
 
 function saveState() {
   localStorage.setItem('boardly-data', JSON.stringify(state));
@@ -90,7 +119,13 @@ function getCurrentBoardData() {
 /* ---------- BOARD INDICATION TRACKING ---------- */
 
 function updateCanvasBackground() {
-  // Left empty since CSS handles styling now
+  const currentTab = state.currentBoard;
+  const tabIndex = state.tabs.indexOf(currentTab);
+  const color = activeTabColors.has(currentTab) 
+    ? activeTabColors.get(currentTab) 
+    : getDefaultColor(tabIndex >= 0 ? tabIndex : 0);
+
+  board.style.setProperty('--active-board-accent', color);
 }
 
 function renderBoard() {
@@ -482,6 +517,10 @@ document.getElementById('add-tab').addEventListener('click', () => {
   state.tabs.push(formatted);
   state.boards[formatted] = [];
   
+  // Assign a permanent color locked to the new tab's name
+  activeTabColors.set(formatted, getDefaultColor(state.tabs.length - 1));
+  saveColorsToStorage();
+
   saveState();
   renderTabs();
 });
