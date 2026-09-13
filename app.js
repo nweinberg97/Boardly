@@ -34,13 +34,9 @@ undoBtn.addEventListener('click', () => {
     if (!state.tabs.includes(action.tabName)) {
       state.tabs.splice(action.tabIndex, 0, action.tabName);
       state.boards[action.tabName] = action.boardData || [];
-      if (action.color) {
-        activeTabColors.set(action.tabName, action.color);
-        saveColorsToStorage();
-      }
     }
   }
-
+  
   saveState();
   renderTabs();
   renderBoard();
@@ -94,13 +90,7 @@ function getCurrentBoardData() {
 /* ---------- BOARD INDICATION TRACKING ---------- */
 
 function updateCanvasBackground() {
-  const currentTab = state.currentBoard;
-  const tabIndex = state.tabs.indexOf(currentTab);
-  const color = activeTabColors.has(currentTab) 
-    ? activeTabColors.get(currentTab) 
-    : getDefaultColor(tabIndex >= 0 ? tabIndex : 0);
-
-  board.style.setProperty('--active-board-accent', color);
+  // Left empty since CSS handles styling now
 }
 
 function renderBoard() {
