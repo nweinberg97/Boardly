@@ -53,6 +53,6 @@ Everything is stored locally using localStorage.
 2. Add cards
 3. Drag cards freely
 4. Create custom tabs
-5. Right-click cards to delete
+5. Drag cards into trash to delete
 
 All data saves automatically.
