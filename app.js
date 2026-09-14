@@ -3,7 +3,7 @@ const tabsContainer = document.getElementById('tabs');
 const tabsWrapper = document.getElementById('tabs-wrapper');
 const undoBtn = document.getElementById('undo-btn');
 
-const trashSound = new Audio('sounds/sounds_plastic-crunch-83779.mp3');
+const trashSound = new Audio('sounds/crunch.mp3');
 trashSound.preload = 'auto';
 
 
@@ -559,7 +559,7 @@ function enableTrashBin() {
     if (draggedTab && state.tabs.includes(draggedTab)) {
       deleteTab(draggedTab);
       // Replaced global trashSound with a fresh instance to avoid browser blockages
-      new Audio('sounds/sounds_plastic-crunch-83779.mp3').play().catch(err => console.log("Audio playback prevented:", err));
+      new Audio('sounds/crunch.mp3').play().catch(err => console.log("Audio playback prevented:", err));
     }
   });
 }
