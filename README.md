@@ -56,3 +56,7 @@ Everything is stored locally using localStorage.
 5. Drag cards into trash to delete
 
 All data saves automatically.
+
+---
+
+Part of the broader LifeOS project, currently in development.
