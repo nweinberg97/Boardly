@@ -77,6 +77,10 @@ function saveColorsToStorage() {
   localStorage.setItem('boardly-tab-palette', JSON.stringify(colorObject));
 }
 
+function getDefaultColor(index) {
+  return '#adb5bd'; // same neutral grey used for inactive tab dots in CSS
+}
+
 /* ---------- STATE ---------- */
 
 const state = JSON.parse(localStorage.getItem('boardly-data')) || {
